@@ -1,26 +1,22 @@
-# Plex Movie Poster Display
-Scraps the Plex sessions page to display the current playing movie or TV show poster on a screen.
+# Plex Now Playing Display
+Scraps the Plex sessions page to display the current playing movie or TV show background art and movie or show data on a screen.
 
-Disclaimer – I am a network engineer not a programmer. I play around with code. I am publishing this to give back to the communities that has helped me learn. There may be better ways of scraping the Plex Posters, but this is the way I chose to do it. I am open to suggestions. Use at your own risk.
-
-I decided to rewrite the program in PHP and make it browser based. This allows me to have the Raspberry Pi boot to the desktop, automatically start a browser in kiosk mode, and open the PHP site.
-
-This script scraps http://IP_ADDRESS_OF_PLEX_SERVER>:32400/status/sessions for clients and displays the poster of the currently playing movie or TV show. If nothing is currently playing it will pull a random poster of an unwatched movie.
+This script scrapes http://IP_ADDRESS_OF_PLEX_SERVER>:32400/status/sessions for clients and displays the art and metadata information of the currently playing movie or TV show. If nothing is currently playing it will display a clock and background image (current code points to assets/standby.jpg, file not included).
 
 ## My Setup
 Plex Media Server is running on a dedicated server.
-Plex Movie Poster Display is running on separate Raspberry Pi 3 connected to a screen via HDMI. On boot up the Pi launches Chromium in kiosk mode and loads the Plex Movie Poster Display URL.
+Plex Now Playing Display is running on separate Raspberry Pi connected to a 3.5" pi tft screen. On boot up the Pi launches Chromium in kiosk mode and loads the Plex Now Playing Display URL.
 
 ## Prerequisites
  - A functioning Plex Server
- - Web Server – I am running NGINX
- - PHP – I am running version  5.6.22
+ - Web Server â€“ I am running apache
+ - PHP â€“ I am running version  5.6.30
  - Your X-Plex-Token. https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
 
 ## Features 
-- Custom Text on top and bottom of posters.
-- Cache posters locally.
-- Custom Image
+- TV Shows display show title, season and episode number and episode title over show background art.
+- Movies display the movie title, year and description over the background art for the movie.
+- Custom Image. If current status isn't for you, you can have the display show whatever.
 - Web Frontend for configuration (ALPHA) 
 
 ## Installation
