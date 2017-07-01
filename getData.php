@@ -1,9 +1,6 @@
 <?php
-#session_set_cookie_params(60,"/");
-#session_start()
 include 'config.php';
 $results = Array();
-$movies = Array();
 
 #Display Custom Image
 if ($customImageEnabled == "Yes") {
@@ -12,7 +9,7 @@ if ($customImageEnabled == "Yes") {
   $info = "<p style='font-size: 25px;'> &nbsp; </p>";
 } else {
 
-  #Plex Module
+#Plex Module
   $url     = 'http://'.$plexServer.':32400/status/sessions?X-Plex-Token='.$plexToken.'';
   $getxml  = file_get_contents($url);
   $xml 	 = simplexml_load_string($getxml) or die("feed not loading");
@@ -21,108 +18,61 @@ if ($customImageEnabled == "Yes") {
   $info    = NULL;
   $date = date('H:i');
 
+#Movie Playing
   if ($xml['size'] != '0') {
       foreach ($xml->Video as $clients) {
           if(strstr($clients->Player['address'], $plexClient)) {
 
             if(strstr($clients['librarySectionID'], "2")) {
-            	$art = $clients['thumb'];
+            	$art = $clients['art'];
 
                 $poster = explode("/", $art);
                 $poster = trim($poster[count($poster) - 1], '/');
                 $filename = '/cache/' . $poster;
 
                 if (file_exists($filename)) {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
+                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
                 } else {
                     file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
                 }
-
-                $title =  "<p style='font-size: 40px; -webkit-text-stroke: 2px yellow; color: yellow; line-height: 92%;'>" . $clients['title'] . "</p>";
-                $display = "<p style='font-size: 35px;'>" . $clients['year'] . "</p>";
-                $info = "<p style='font-size: 25px;'>" . $clients['summary'] . "</p>";
+		$bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
+                $title =  "<p style='overflow: hidden; font-size: 60px; font-size: 10vw; font-size: 14vh; font-weight: bold; color: yellow; line-height: 92%; text-align: center; z-index: 100; top: 40px; position: absolute; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; width: 440px; left: 50%; margin-left: -220px;'>" . $clients['title'] . "</p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:1;'>";
+                $display = "<p style='overflow: hidden; font-size: 35px; text-align: center; font-weight: bold; z-index: 100; top: 170px; position: absolute; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; width: 480px; left: 50%; margin-left: -240px; width: 480px'>" . $clients['year'] . "</p>";
+                $info = "<p style='overflow: hidden; font-size: 30px; text-align: center; z-index: 100; top: 225px; position: absolute; width: 480px; left: 50%; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; margin-left: -240px; line-height: 92%;'>" . $clients['summary'] . "</p>";
 	    }
 
+#TV Show Playing
             if(strstr($clients['librarySectionID'], "1")) {
-                $art = $clients['grandparentThumb'];
+                $art = $clients['grandparentArt'];
 
                 $poster = explode("/", $art);
                 $poster = trim($poster[count($poster) - 1], '/');
                 $filename = '/cache/' . $poster;
 
                 if (file_exists($filename)) {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
+                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
                 } else {
                     file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
                 }
-
-                $title =  "<p style='font-size: 40px; -webkit-text-stroke: 2px yellow; color: yellow; line-height: 92%;'>" . $clients['grandparentTitle'] . "</p>";
-                $display = "<p style='font-size: 25px; line-height: 50%;'>" . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
-                $info = "<p style='font-size: 30px; line-height 50%;'>" . $clients['title'] . "</p><br /><p style='font-size: 30px; color: yellow; bottom: 0px;'> $date </p>" ;
+		$bg = "<div style='background-image: url(http://$plexServer:32400$art); background-repeat: no-repeat;width: 480px;'>";
+                $title =  "<p style='font-size: 60px; font-size: 12vw; font-size: 15vh; font-weight: bold; color: yellow; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; line-height: 92%; text-align: center; z-index: 100; position: absolute; top: 40px; width: 480px; left: 50%; margin-left: -240px;'>" . $clients['grandparentTitle'] . "</p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:1;'>";
+                $display = "<p style='font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; font-weight: bold; z-index: 100; top: 210px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>" . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
+                $info = "<p style='font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; color: yellow; line-height: 90%; top: 260px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>" . $clients['title'] . "</p>";
            }
         }
      }
   }
 
-  #If Nothing is Playing
+#If Nothing is Playing
   if ($display == NULL) {
-    $title = "<p style='font-size: 45px; -webkit-text-stroke: 2px yellow; color: yellow;'> $date </p>";
-    $UnWatchedMoviesURL = 'http://'.$plexServer.':32400/library/sections/'.$plexServerMovieSection.'/unwatched?X-Plex-Token='.$plexToken.'';
-    $getMovies  = file_get_contents($UnWatchedMoviesURL);
-    $xmlMovies = simplexml_load_string($getMovies) or die("feed not loading");
-    $countMovies = count($xmlMovies);
-    $f_contents = file("rss.txt");
-    $line = $f_contents[rand(0, count($f_contents) - 1)];
-
-    $rss = new DOMDocument();
-	$rss->load($line);
-	$feed = array();
-	foreach ($rss->getElementsByTagName('item') as $node) {
-		$item = array (
-			'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
-			'desc' => $node->getElementsByTagName('description')->item(0)->nodeValue,
-			);
-		array_push($feed, $item);
-	}
-	$limit = 5;
-	for($x=0;$x<$limit;$x++) {
-		$headline = str_replace(' & ', ' &amp; ', $feed[$x]['title']);
-		$description = $feed[$x]['description'];
-		$description = substr($description, 0, 100);
-	}
-
-    if ($countMovies > '0') {
-      foreach ($xmlMovies->Video as $movie) {
-        $movies[] = strip_tags($movie['title']);
-      }
-
-      $random_keys = array_rand($movies,1);
-      $showMovie = $movies[$random_keys];
-
-      foreach ($xmlMovies->Video as $movie) {
-         if(strstr($movie['title'], $showMovie)) {
-           $art = $movie['thumb'];
-
-           $poster = explode("/", $art);
-           $poster = trim($poster[count($poster) - 1], '/');
-           $filename = 'cache/' . $poster;
-
-           if (file_exists($filename)) {
-              #Future Code Coming
-           } else {
-              file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-           }
-         }
-      }
-    }
-    $info = "<p style='font-size: 20px; word-wrap: break-word;'>" . $description . "</p>";
-    $display = "<p style='font-size: 28px; word-wrap: break-word; line-height: 95%;'>" . $headline . "</p>";
+    $title = "<img position: absolute; top: 0; src='/assets/standby.jpg' width='480' style='opacity:1;'>";
+    $info = NULL;
+    $display = "<p style='font-size: 45px; font-weight: bold; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: yellow; line-height: 92%; text-align: center; z-index: 100; top: 190px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>" . $date . "</p>";
   }
 }
 
 $results['top'] = "$title";
-$results['middle'] = "$display";
-$results['bottom'] = "$info";
-
+$results['middle'] = "$display $info";
+$results['bottom'] = NULL;
 echo json_encode($results);
 ?>

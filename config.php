@@ -1,20 +1,18 @@
-
-
 <?php
 //Server Configuration
-$plexServer = 'PLEX_SERVER_IP';
-$plexToken = 'PLEX_SERVER_TOKEN';
-$plexServerMovieSection = 'PLEX_SERVER_MOVIES_SECTION_NUMBER';
+$plexServer = '192.168.1.140';
+$plexToken = 'y5hyQjYNHphfnxDqm5us';
+$plexServerMovieSection = '2';
 
 //Cleint Configuration
-$plexClient = 'PLEX_CLIENT_IP';
+$plexClient = '192.168.1.102';
 
 //Custom Image
 $customImageEnabled = 'No';
 $customImage = '';
 
 //Misc
-$comingSoonTopText = 'COMING SOON';
-$comingSoonBottomText = 'To Matt\'s Movie Theater';
+$comingSoonTopText = 'FakeTV';
+$comingSoonBottomText = ' ';
 $nowShowingTopText = 'NOW SHOWING';
 ?>
