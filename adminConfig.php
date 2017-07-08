@@ -14,6 +14,7 @@
 \$plexServer = '$_POST[plexServer]';
 \$plexToken = '$_POST[plexToken]';
 \$plexServerMovieSection = '$_POST[plexServerMovieSection]';
+\$plexServerTVSection = '$_POST[plexServerTVSection]';
 \n//Cleint Configuration
 \$plexClient = '$_POST[plexClient]';
 \n//Custom Image
@@ -66,6 +67,13 @@
           </div>
 
           <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> TV Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServerTVSection" value="<?php echo "$plexServerTVSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
             <label class="control-label col-sm-2">Client IP: </label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="plexClient" value="<?php echo "$plexClient"; ?>">
@@ -76,27 +84,6 @@
             <div class="col-sm-10">
               <input type="hidden" class="form-control" name="customImageEnabled" value="<?php echo "$customImageEnabled"; ?>">
               <input type="hidden" class="form-control" name="customImage" value="<?php echo "$customImage"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2">Coming Soon Top: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="comingSoonTopText" value="<?php echo "$comingSoonTopText"; ?>">
-            </div>
-          </div>
-         
-          <div class="form-group">
-            <label class="control-label col-sm-2">Coming Soon Bottom: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="comingSoonBottomText" value="<?php echo "$comingSoonBottomText"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2">Now Showing Text: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="nowShowingTopText" value="<?php echo "$nowShowingTopText"; ?>">
             </div>
           </div>
 
