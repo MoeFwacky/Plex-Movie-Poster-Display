@@ -1,7 +1,7 @@
 <?php if (!empty($_POST)) {
 
   $myfile = fopen("config.php", "w") or die("Unable to open file!");
- 
+
   //Hack to fix '... Need to fix this later.
   $_POST[comingSoonTopText] = str_replace("'", "\'", $_POST[comingSoonTopText]);
   $_POST[comingSoonBottomText] = str_replace("'", "\'", $_POST[comingSoonBottomText]);
@@ -15,6 +15,16 @@
 \$plexToken = '$_POST[plexToken]';
 \$plexServerMovieSection = '$_POST[plexServerMovieSection]';
 \$plexServerTVSection = '$_POST[plexServerTVSection]';
+\$plexServer70sCommercialSection = '$_POST[plexServer70sCommercialSection]';
+\$plexServer80sCommercialSection = '$_POST[plexServer80sCommercialSection]';
+\$plexServer90sCommercialSection = '$_POST[plexServer90sCommercialSection]';
+\$plexServer00sCommercialSection = '$_POST[plexServer00sCommercialSection]';
+\$plexServer10sCommercialSection = '$_POST[plexServer10sCommercialSection]';
+\$plexServerFakeCommercialSection = '$_POST[plexServerFakeCommercialSection]';
+\$plexServerMusicVideosSection = '$_POST[plexServerMusicVideosSection]';
+\$plexServerStationIDSection = '$_POST[plexServerStationIDSection]';
+\$plexServerTrailersSection = '$_POST[plexServerTrailersSection]';
+
 \n//Cleint Configuration
 \$plexClient = '$_POST[plexClient]';
 \n//Custom Image
@@ -70,6 +80,69 @@
             <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> TV Section: </label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="plexServerTVSection" value="<?php echo "$plexServerTVSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 70s Commercial Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServer70sCommercialSection" value="<?php echo "$plexServer70sCommercialSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 80s Commercial Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServer80sCommercialSection" value="<?php echo "$plexServer80sCommercialSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 90s Commercial Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServer90sCommercialSection" value="<?php echo "$plexServer90sCommercialSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 2000s Commercial Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServer00sCommercialSection" value="<?php echo "$plexServer00sCommercialSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 2010s Commercial Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServer10sCommercialSection" value="<?php echo "$plexServer10sCommercialSection"; ?>">
+            </div>
+          </div>
+ 
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Fake Commercial Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServerFakeCommercialSection" value="<?php echo "$plexServerFakeCommercialSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Music Videos Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServerMusicVideosSection" value="<?php echo "$plexServerMusicVideosSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Station ID Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServerStationIDSection" value="<?php echo "$plexServerStationIDSection"; ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Movie Trailers Section: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexServerTrailersSection" value="<?php echo "$plexServerTrailersSection"; ?>">
             </div>
           </div>
 
