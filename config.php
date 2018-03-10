@@ -2,8 +2,8 @@
 
 <?php
 //Server Configuration
-$plexServer = '192.168.1.140';
-$plexToken = 'mC8svxR7B8rxvUPZncU5';
+$plexServer = 'yourplexip';
+$plexToken = 'yourplextoken';
 $plexServerMovieSection = '1';
 $plexServerTVSection = '2';
 $plexServer70sCommercialSection = '4';
