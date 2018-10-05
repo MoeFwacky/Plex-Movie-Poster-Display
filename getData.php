@@ -1,341 +1,159 @@
 <?php
-include 'config.php';
+include 'config.php'; #Get variables from config
 $results = Array();
 
-#Display Custom Image
-if ($customImageEnabled == "Yes") {
-  $title = "<br /><p style='font-size: 55px; -webkit-text-stroke: 2px yellow;'> &nbsp; </p>";
-  $display = "<img src='$customImage' style='width: 100%'>";
-  $info = "<p style='font-size: 25px;'> &nbsp; </p>";
-} else {
+# GET PLEX DATA
+$url = "http://" . $plexServer . ":" . $plexport . "/status/sessions?X-Plex-Token=" . $plexToken; #set plex server url
+$getxml = file_get_contents($url);
+$xml = simplexml_load_string($getxml) or die("feed not loading");
 
-#Plex Module
-  $url     = 'http://'.$plexServer.':32400/status/sessions?X-Plex-Token='.$plexToken.'';
-  $getxml  = file_get_contents($url);
-  $xml 	 = simplexml_load_string($getxml) or die("feed not loading");
-  $title   = NULL;
-  $display = NULL;
-  $info    = NULL;
-  $date = date('H:i');
-  $day = date('D F d, Y');
-#  $ch1 = simplexml_load_file("/var/www/html/ch1/schedules/pseudo_channel.xml");
-$pgrep = shell_exec('find /home/pi/channels/ -name "running.pid" -type f -exec cat {} +');
-$pdir = shell_exec('find /home/pi/channels/ -name "running.pid" -type f');
+$time_style=NULL;
+$top_line=NULL;
+$middle_line=NULL;
+$bottom_line=NULL;
 
-  if ($xml['size'] != '0') {
-      foreach ($xml->Video as $clients) {
-          if(strstr($clients->Player['address'], $plexClient)) {
-#Movie Playing
-            if($clients['librarySectionID'] == $plexServerMovieSection) {
-            	$art = $clients['art'];
+# SET TIME AND DATE
+$date = date('H:i'); #get current time
+$day = date('D F d'); #get current date
+$text_color='cyan';
+$text_color_alt='cyan';
 
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
+#CHECK IF PSEUDO CHANNEL IS RUNNING AND ON WHAT CHANNEL
+$is_ps_running = "find " . $pseudochannel . " -name running.pid -type f -exec cat {} +";
+$ps_channel_id = "find " . $pseudochannel . " -name running.pid -type f";
+$pgrep = shell_exec($is_ps_running); #check if pseudo channel is running
+$pdir = shell_exec($ps_channel_id); #identify which channel is running
+$channel_num = str_replace($pseudochannel . "pseudo-channel_", "", $pdir);
+$channel_num = ltrim($channel_num, '0');
+$channel_num = str_replace("/running.pid", "", $channel_num);
 
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-		$bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-                $title =  "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black; color: yellow; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><p style='font-family: Digital\-7; font-size: 15vw; font-size: 13vh; color: yellow; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; line-height: 92%; text-align: center; z-index: 100; position: absolute; top: 200px; width: 480px; left: 50%; margin-left: -240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis ,   ; max-width: 480px;'>" . $clients['title'] . "</p><img position: absolute; top: 20px; src='http://$plexServer:32400$art' width='480' style='opacity:1;'>";
-                $display = "<p style='font-family: Digital\-7; font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; top: 230px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>" . $clients['year'] . "</p>";
-                if (strpos($pdir,'pseudo-channel_01')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 1</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_02')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 2</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_03')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 3</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_04')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 4</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_05')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 5</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_06')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 6</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_07')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 7</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_08')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 8</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_09')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 9</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_10')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 10</p>";
-                }
-                $info = "<p style='font-family: Digital\-7; font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; color: yellow; line-height: 90%; top: 275px; position: absolute; width: 480px; left: 50%; margin-left: -240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;'>" . $clients['tagline'] . "</p>";
-	    }
+# LINE STYLE VARIABLES
+if ($DisplayType == 'half') {
+	$time_style = "<p style='font-family: Digital\-7; font-size: 95px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: left; z-index: 100; top: 0px; position: absolute; width: 350px; left: 140px; margin-left: 0px;'>";
+	$top_line = "<p style='font-family: Digital\-7; font-size: 35px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: left; z-index: 100; top: 80px; position: absolute; white-space: nowrap; overflow: hidden; width: 480px; left: 140px; margin-left: 0px;'>";
+	$middle_line = "<p style='font-family: Digital\-7; font-size: 35px; text-align: left; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; top: 100px; color: cyan; left: 140px; position: absolute; width: 350px; margin-left: 0px;'>";
+	$bottom_line = "<p style='font-family: Digital\-7; font-size: 35px; text-align: left; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; color: cyan; line-height: 90%; top: 140px; left: 140px; position: absolute; width: 350px; margin-left: 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;'>";
+	$side_channel = "<p style='font-family: Digital\-7; font-size: 20px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: right; z-index: 100; top: 10px; position: absolute; width: 480px; right: 27px; margin-left: 0px;'>Channel $channel_num</p>";
 
-#TV Show Playing
-            if($clients["librarySectionID"] == $plexServerTVSection) {
-                $art = $clients['grandparentArt'];
-
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-		$bg = "<div style='background-image: url(http://$plexServer:32400$art); background-repeat: no-repeat;width: 480px;'>";
-                $title =  "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black; color: yellow; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 20px; src='http://$plexServer:32400$art' width='480' style='opacity:0.9;'>";
-                $display = "<p style='font-family: Digital\-7; font-size: 35px; color: yellow; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; line-height: 92%; text-align: center; z-index: 100; position: absolute; top: 200px; width: 480px; left: 50%; margin-left: -240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;'>" . $clients['grandparentTitle'] . "</p><p style='font-family: Digital\-7; font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; top: 230px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>" . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
-                if (strpos($pdir,'pseudo-channel_01')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 1</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_02')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 2</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_03')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 3</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_04')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 4</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_05')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 5</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_06')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 6</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_07')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 7</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_08')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 8</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_09')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 9</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_10')!==False) {
-                        $channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: white; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 10</p>";
-                }
-                $info = "<p style='font-family: Digital\-7; font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; color: yellow; line-height: 90%; top: 275px; position: absolute; width: 480px; left: 50%; margin-left: -240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;'>" . $clients['title'] . "</p>";
-           }
-
-#70s Commercial Playing
-		if($clients["librarySectionID"] == $plexServer70sCommercialSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>1970s ADVERTISEMENT</p>";
-	  }
-
-#80s Commercial Playing
-		if($clients['librarySectionID'] == $plexServer80sCommercialSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>1980s ADVERTISEMENT</p>";
-	  }
-
-#90s Commercial Playing
-		if($clients['librarySectionID'] == $plexServer90sCommercialSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>1990s ADVERTISEMENT</p>";
-	  }
-
-#00s Commercial Playing
-		if($clients['librarySectionID'] == $plexServer00sCommercialSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>2000s ADVERTISEMENT</p>";
-	  }
-
-#10s Commercial Playing
-		if($clients['librarySectionID'] == $plexServer10sCommercialSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>2010s ADVERTISEMENT</p>";
-	  }
-
-#Fake Commercial Playing
-		if($clients['librarySectionID'] == $plexServerFakeCommercialSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>FAKE ADVERTISEMENT</p>";
-	  }
-
-#Music Videos Playing
-		if($clients['librarySectionID'] == $plexServerMusicVideosSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>MUSIC VIDEO</p>";
-	  }
-
-#Station ID Playing
-		if($clients['librarySectionID'] == $plexServerStationIDSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>FAKETV HDMI CHANNEL 1</p>";
-	  }
-
-#Movie Trailers Playing
-		if($clients['librarySectionID'] == $plexServerTrailersSection) {
-                $art = $clients['art'];
-                $poster = explode("/", $art);
-                $poster = trim($poster[count($poster) - 1], '/');
-                $filename = '/cache/' . $poster;
-
-                if (file_exists($filename)) {
-                    #file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                } else {
-                    file_put_contents("cache/$poster", fopen("http://$plexServer:32400$art?X-Plex-Token=$plexToken", 'r'));
-                }
-                $bg = "<p><img position: absolute; top: 0; src='http://$plexServer:32400$art' width='480' style='opacity:0.5;'></p>";
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-		$info = NULL;
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>MOVIE TRAILER</p>";
-	  }
-        }
-     }
-  }
-
-#If Nothing is Playing (off)
-  if ($display == NULL) {
-	 if ($pgrep >= 1) {
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
-				if (strpos($pdir,'pseudo-channel_01')!==False) {
-					$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 1</p>";
-				}
-                if (strpos($pdir,'pseudo-channel_02')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 2</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_03')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 3</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_04')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 4</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_05')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 5</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_06')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 6</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_07')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 7</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_08')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 8</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_09')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 9</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_10')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel 10</p>";
-                }
-                if (strpos($pdir,'pseudo-channel_11')!==False) {
-                        $display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Test Channel for Testing</p>";
-                }
-	} else {
-		$title = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px cyan, 0 0 25px cyan, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>" . $date . "</p><img position: absolute; top: 0; src='/assets/vcr.jpg' width='480' style='opacity:1;'>";
-		$display = "<p style='font-family: Digital\-7; font-size: 45px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: cyan; line-height: 92%; text-align: center; z-index: 100; top: 198px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>" . $day . "</p>";
-	}
-    $info = "<p></p>";
-  }
-
+	$position_half = "<img position: absolute; align: top; width='480' style='opacity:1;'>";
 }
 
-$results['top'] = "$channel $title";
-$results['middle'] = "$display $info";
-$results['bottom'] = "$channel";
+if ($DisplayType == 'full') {
+      foreach ($xml->Video as $playdata) {
+          if(strstr($playdata->Player['address'], $plexClient)) {
+			$video_duration = (int)$playdata['duration'];
+			if($playdata['type'] == "movie") {
+				if ($video_duration < "1800000") { #COMMERCIAL
+				$text_color='cyan';
+				$text_color_alt='cyan';
+				} else { #MOVIE
+				$text_color='yellow';
+				$text_color_alt='white';
+				}
+			} elseif($playdata['type'] == "show" || $playdata['parentTitle'] != "") { #SHOW
+			$text_color='yellow';
+			$text_color_alt='white';
+			} else {
+			$text_color='cyan';
+			$text_color_alt='cyan';
+			}
+			}
+		  }
+
+# SET FULL OPTIONS
+	$time_style = "<p style='font-family: Digital\-7; font-size: 195px; font-style: monospace; text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black; color:" . $text_color . "; line-height: 92%; text-align: center; z-index: 100; top: 30px; position: absolute; width: 480px; left: 50%; margin-left: -230px;'>";
+	$top_line = "<p style='font-family: Digital\-7; font-size: 45px; color: $text_color; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; line-height: 92%; text-align: center; z-index: 100; position: absolute; top: 200px; width: 480px; left: 50%; margin-left: -240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis ,   ; max-width: 480px;'>";
+	$middle_line = "<p style='font-family: Digital\-7; font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; top: 230px; color: $text_color_alt; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>";
+	$bottom_line = "<p style='font-family: Digital\-7; font-size: 35px; text-align: center; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; z-index: 100; color: $text_color; line-height: 90%; top: 275px; position: absolute; width: 480px; left: 50%; margin-left: -240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;'>";
+	$side_channel = "<p style='font-family: Digital\-7; font-size: 30px; text-shadow: 5px 5px 10px black, 0 0 25px black, 0 0 5px black; color: $text_color_alt; line-height: 92%; text-align: center; z-index: 100; top: 25px; position: absolute; width: 480px; left: 50%; margin-left: -240px;'>Channel $channel_num</p>";
+
+	$position_play_full = "<img position: absolute; top: 20px; width='480' style='opacity:1;'>";
+	$position_idle_full = "<img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
+}
+
+if(strcmp($channel_num," ")<=0){
+	$channel_num=0;
+}
+
+#If Nothing is Playing
+$text_color='cyan';
+$text_color_alt='cyan';
+if ($DisplayType == 'full') {
+	$position=$position_idle_full;
+}
+if ($DisplayType == 'half') {
+	$position=$position_half;
+}
+if ($pgrep >= 1) { #PSEUDO CHANNEL ON
+	$top_section = $time_style . $date . "</p>" . $position;
+	$middle_section = $top_line . "Channel $channel_num</p>";
+	$bottom_section = $middle_line . "</p>";
+} else { #PSEUDO CHANNEL OFF
+	$top_section = $time_style . $date . "</p>" . $position;
+	$middle_section = $top_line . $day . "</p>";
+	$bottom_section = "<p></p>";
+}
+
+  if ($xml['size'] != '0') { # IF PLAYING CONTENT
+      foreach ($xml->Video as $clients) {
+          if(strstr($clients->Player['address'], $plexClient)) {
+			    #IF PLAYING COMMERCIAL
+				if($clients['type'] == "movie" && $clients['duration'] < 1800000) {
+	          			#$text_color='cyan';
+					#$text_color_alt='cyan';
+					if ($DisplayType == 'full') {
+					$position=$position_idle_full;
+					}
+					if ($DisplayType == 'half') {
+					$position=$position_half;
+					}
+					$top_section = $time_style . $date . "</p>" . $position;
+					$middle_section = $top_line . $clients['librarySectionTitle'] . "</p>";
+					$bottom_section = "<p></p>";
+				}
+				#IF PLAYING MOVIE
+				if($clients['type'] == "movie" && $clients['duration'] >= 1800000) {
+					$text_color='yellow';
+					$text_color_alt='white';
+			        if ($DisplayType == 'half') {
+						$art = $clients['thumb'];
+						$background_art	= "<img position: fixed; margin-top: 10; top: 10px; src='http:\/\/$plexServer:$plexport$art' width='130';'>";
+						$position=$position_half;
+					}
+					if ($DisplayType == 'full') {
+						$art = $clients['art'];
+						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art'; width='480';>";
+						$position=$position_play_full;
+					}
+
+					$top_section = $background_art . $time_style . $date . $side_channel . "</p>" . $position;
+					$middle_section = $top_line . $clients['title'] . $middle_line . $clients['year'] . "</p>";
+					$bottom_section = $bottom_line . $clients['tagline'] . "</p>";
+				}
+				#IF PLAYING TV SHOW
+				if($clients['type'] == "show" || $clients['parentTitle'] != "") {
+					if ($DisplayType == 'half') {
+						$art = $clients['parentThumb'];
+						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art'; width='130';>";
+						$position=$position_half;
+					}
+					if ($DisplayType == 'full') {
+						$art = $clients['grandparentArt'];
+						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art'; width='480';>";
+						$position=$position_play_full;
+						$text_color='yellow';
+						$text_color_alt='white';
+					}
+					$top_section =  $background_art . $time_style . $date . "</p>" . $position;
+					$middle_section = $top_line . $clients['grandparentTitle'] . "</p>" . $middle_line . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
+					$bottom_section = $bottom_line . $clients['title'] . "</p>" . $side_channel . "</p>";
+					}
+				}
+		  }
+	  }
+
+$results['top'] = "$top_section";
+$results['middle'] = "$middle_section $bottom_section";
+$results['bottom'] = "<p></p>";
 echo json_encode($results);
 ?>

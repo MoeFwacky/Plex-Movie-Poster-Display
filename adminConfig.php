@@ -12,28 +12,17 @@
 <?php
 //Server Configuration
 \$plexServer = '$_POST[plexServer]';
+\$plexport = '$_POST[plexport]';
 \$plexToken = '$_POST[plexToken]';
-\$plexServerMovieSection = '$_POST[plexServerMovieSection]';
-\$plexServerTVSection = '$_POST[plexServerTVSection]';
-\$plexServer70sCommercialSection = '$_POST[plexServer70sCommercialSection]';
-\$plexServer80sCommercialSection = '$_POST[plexServer80sCommercialSection]';
-\$plexServer90sCommercialSection = '$_POST[plexServer90sCommercialSection]';
-\$plexServer00sCommercialSection = '$_POST[plexServer00sCommercialSection]';
-\$plexServer10sCommercialSection = '$_POST[plexServer10sCommercialSection]';
-\$plexServerFakeCommercialSection = '$_POST[plexServerFakeCommercialSection]';
-\$plexServerMusicVideosSection = '$_POST[plexServerMusicVideosSection]';
-\$plexServerStationIDSection = '$_POST[plexServerStationIDSection]';
-\$plexServerTrailersSection = '$_POST[plexServerTrailersSection]';
 
 \n//Cleint Configuration
 \$plexClient = '$_POST[plexClient]';
-\n//Custom Image
-\$customImageEnabled = '$_POST[customImageEnabled]';
-\$customImage = '$_POST[customImage]';
-\n//Misc
-\$comingSoonTopText = '$_POST[comingSoonTopText]';
-\$comingSoonBottomText = '$_POST[comingSoonBottomText]';
-\$nowShowingTopText = '$_POST[nowShowingTopText]';
+
+\n//Pseudo Channel
+\$pseudochannel = '$_POST[pseudochannel]';
+
+\n//Display Type
+\$DisplayType = '$_POST[DisplayType]';
 ?>
 ";
 
@@ -60,89 +49,18 @@
               <input type="text" class="form-control" name="plexServer" value="<?php echo "$plexServer"; ?>">
             </div>
           </div>
-
+        <form class="form-horizontal" method="post">
+          <div class="form-group">
+            <label class="control-label col-sm-2">Plex Server Port: </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="plexport" value="<?php echo "$plexport"; ?>">
+            </div>
+          </div>
           <div class="form-group">
             <label class="control-label col-sm-2"><a href="https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token" target=_blank>
               <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a> X-Plex-Token: </label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="plexToken" value="<?php echo "$plexToken"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Movie Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServerMovieSection" value="<?php echo "$plexServerMovieSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> TV Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServerTVSection" value="<?php echo "$plexServerTVSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 70s Commercial Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServer70sCommercialSection" value="<?php echo "$plexServer70sCommercialSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 80s Commercial Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServer80sCommercialSection" value="<?php echo "$plexServer80sCommercialSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 90s Commercial Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServer90sCommercialSection" value="<?php echo "$plexServer90sCommercialSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 2000s Commercial Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServer00sCommercialSection" value="<?php echo "$plexServer00sCommercialSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> 2010s Commercial Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServer10sCommercialSection" value="<?php echo "$plexServer10sCommercialSection"; ?>">
-            </div>
-          </div>
- 
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Fake Commercial Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServerFakeCommercialSection" value="<?php echo "$plexServerFakeCommercialSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Music Videos Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServerMusicVideosSection" value="<?php echo "$plexServerMusicVideosSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Station ID Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServerStationIDSection" value="<?php echo "$plexServerStationIDSection"; ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="control-label col-sm-2"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Movie Trailers Section: </label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" name="plexServerTrailersSection" value="<?php echo "$plexServerTrailersSection"; ?>">
             </div>
           </div>
 
@@ -153,13 +71,20 @@
             </div>
           </div>
 
+                  <form class="form-horizontal" method="post">
           <div class="form-group">
-            <div class="col-sm-10">
-              <input type="hidden" class="form-control" name="customImageEnabled" value="<?php echo "$customImageEnabled"; ?>">
-              <input type="hidden" class="form-control" name="customImage" value="<?php echo "$customImage"; ?>">
+            <label class="control-label col-sm-2">Pseudo Channel Location: </label>
+                        <div class="col-sm-10">
+              <input type="text" class="form-control" name="pseudochannel" value="<?php echo "$pseudochannel"; ?>">
             </div>
           </div>
-
+          <div class="form-group">
+            <label class="control-label col-sm-2">Display Type: </label>
+            <div class="col-sm-10">
+              <label><input type="radio" class="form-control" name="DisplayType" value="full">Full Landscape</label>
+              <label><input type="radio" class="form-control" name="DisplayType" value="half">Half Landscape</label>
+            </div>
+          </div>
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
               <input class="btn btn-primary" type="submit" value="Save" name='submit' />

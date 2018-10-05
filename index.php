@@ -23,10 +23,10 @@
 
     <body>
         <div id="container" style="max-width:480">
-            <div id="alert" align="center" class="center" scrolling="no"></div>
-            <div id="top" align="center" class="center" scrolling="no"></div>
-            <div id="middle" class="center" scrolling="no"></div>
-            <div id="bottom" align="center" class="center" scrolling="no"></div>
+            <div id="alert" align="left" class="center" scrolling="no"></div>
+            <div id="top" align="left" class="center" scrolling="no"></div>
+            <div id="middle" class="left" scrolling="no"></div>
+            <div id="bottom" align="left" class="center" scrolling="no"></div>
         </div>
     </body>
 </html>
