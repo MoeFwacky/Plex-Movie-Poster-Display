@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="assets/favicon.ico">
 
-    <title>Plex Movie Poster Display</title>
+    <title>Plex Status Display</title>
 
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/css/admin.css" rel="stylesheet">
@@ -25,12 +25,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="admin.php"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> Plex Movie Poster Display</a>
+          <a class="navbar-brand" href="admin.php"><span class="glyphicon glyphicon-film" aria-hidden="true"></span> Plex Status Display</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="adminConfig.php"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Configuration</a></li>
-            <li><a href="adminCustomImage.php"> <span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Custom Image</a></li>
+	    <li><a href="index.php"> <span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Status Display</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
