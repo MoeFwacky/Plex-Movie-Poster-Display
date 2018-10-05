@@ -1,34 +1,32 @@
-# Plex Movie Poster Display
-Scraps the Plex sessions page to display the current playing movie or TV show poster on a screen.
+# Plex Now Playing Display
+This fork has been modified to work with the Pseudo Channel script (more information here https://medium.com/@Fake.TV/faketv-now-with-pseudo-channels-7c0ed2f32872)
 
-Disclaimer – I am a network engineer not a programmer. I play around with code. I am publishing this to give back to the communities that has helped me learn. There may be better ways of scraping the Plex Posters, but this is the way I chose to do it. I am open to suggestions. Use at your own risk.
+This script scrapes http://<IP_ADDRESS_OF_PLEX_SERVER>:<ACCESS_PORT_OF_PLEX_SERVER>/status/sessions for clients and displays information about the currently playing show on the selected client. For movies, it will display the name, year and tagline. For TV shows, it displays the name, season number, episode number and episode title. 
 
-I decided to rewrite the program in PHP and make it browser based. This allows me to have the Raspberry Pi boot to the desktop, automatically start a browser in kiosk mode, and open the PHP site.
+There are two display modes available. Full Landscape and Half Landscape. In my setup, I have two adafruit 3.5" TFT screens which are mounted in repurposed VCR shells, in the former LED windows. One of them allows for the full screen to be shown, and the other allows for only half. With that in mind, full landscape displays data on the full screen and the half landscape option restricts the data to only display in approximately the top half of the screen, leaving the bottom blank.
 
-This script scraps http://IP_ADDRESS_OF_PLEX_SERVER>:32400/status/sessions for clients and displays the poster of the currently playing movie or TV show. If nothing is currently playing it will pull a random poster of an unwatched movie.
+Note: Because Plex classifies both movies and custom video libraries as "movies" and this fork is meant to work with Pseudo Channel, which injects commercials between content, any movie or custom videos under 30 minutes are classified as "commercials" and will display the name of the library on the standard clock display instead of switching to the movie poster/background mode.
 
 ## My Setup
-Plex Media Server is running on a dedicated server.
-Plex Movie Poster Display is running on separate Raspberry Pi 3 connected to a screen via HDMI. On boot up the Pi launches Chromium in kiosk mode and loads the Plex Movie Poster Display URL.
+Plex Media Server is running on a dedicated Rasperry Pi 3
+Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 connected to an adafruit 3.5" TFT screen. This same Pi also runs Pseudo Channel. On boot up the Pi launches Chromium in kiosk mode and loads the Plex Now Playing Display URL. Another Pi, a Zero W, is configured with another screen and connects to the second instance on the Pi2.
 
 ## Prerequisites
  - A functioning Plex Server
- - Web Server – I am running NGINX
- - PHP – I am running version  5.6.22
+ - Web Server â€“ I am running Apache, but nginx or whatever else you prefer will work just fine.
+ - PHP â€“ I am running version  5.6.30
  - Your X-Plex-Token. https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
 
 ## Features 
-- Custom Text on top and bottom of posters.
-- Cache posters locally.
-- Custom Image
-- Web Frontend for configuration (ALPHA) 
+- Two View Modes
+- Shows Media title text and other information
+- Displays Pseudo Channel status information and commercial library names
+- Web Frontend for configuration
 
 ## Installation
-- Copy all the files into the root of your web server.
-- Fix permission on cache folder (chmod 777 cache)
+- Copy all the files into the root of your web server, or desired subfolder if running multiple instances (one copy per instance).
 - Fix permission on config.php file. (chmod 777 config.php)
-- Open the URL to your server in a browser and configure. http://SERVER_IP_ADDRESS/admin.php
+- Open the URL to your server in a browser and configure. http://SERVER_IP_ADDRESS/admin.php or http://SERVER_IP_ADDRESS/path/admin.php
 
 ## Upgrading
-- Delete all files in the cache directory.
 - Check permissions on cache and config.php.
