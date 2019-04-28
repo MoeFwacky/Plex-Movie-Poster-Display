@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('./psConfig.php');
 $get_plex_token = array();
 $plexServer_url = array();
@@ -25,13 +26,18 @@ $token = str_replace("'","",$token);
 $plexToken = str_replace("token = ","",$token);
 
 //Get Client Name from Pseudo Channel Config
-if (isset($_GET['tv'])) {
-	$plexClientName = $_GET['tv'];
-} else {
-	$plexClientName = $getConfig[40];
-	$plexClientName = trim($plexClientName, 'plexClients = ["');
-	$plexClientName = str_replace('"]','',$plexClientName);
-	$plexClientName = trim($plexClientName);
+$configClientName = $getConfig[40];
+$configClientName = trim($configClientName, 'plexClients = ["');
+$configClientName = str_replace('"]','',$configClientName);
+$configClientName = trim($configClientName);
+$pseudochannelTrim = rtrim($pseudochannel,'/');
+$plexClientName = $configClientName;
+if (isset($_SESSION['tv'])) {
+	$plexClientName = $_SESSION['tv'];
+        if ($_SESSION['tv'] != $configClientName) {
+		$pseudochannel = $pseudochannelTrim . "_" . $_SESSION['tv'] . "/";
+		$pseudochannel = trim($pseudochannel);
+	}
 }
 
 

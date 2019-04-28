@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<?php include('./control.php'); ?>
+<?php
+session_destroy();
+session_start();
+include('./control.php'); ?>
 <html lang="en" class="no-js" style="height:100%">
 	<head>
 		<style type="text/css">a {text-decoration: none}</style>
@@ -57,7 +60,13 @@
 			$id= "ch" . $_GET['ch'];
 		} else {
 			$id="rightnow";
-		} ?>
+		}
+		if (isset($_GET['tv'])) {
+			$_SESSION['tv'] = $_GET['tv'];
+		} else {
+			$_SESSION['tv'] = $plexClientName;
+		}
+		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">
 			<div class="container" style="position:absolute;top:60px" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By</p>
