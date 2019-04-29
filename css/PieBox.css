@@ -1,0 +1,52 @@
+html,body { 
+    width:480px;
+    height:320px;
+    overflow:hidden;
+}
+
+body {
+    background-color:black;
+    color:white;
+    font-size:large;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow:hidden;
+}
+
+#container {
+    min-height: 100%;
+    position:absolute;
+    overflow:hidden;
+}
+
+.alert {
+    position:absolute;
+    width:100%;
+    top:0;
+    background-color:rgba(0, 0, 0, 0.5);
+}
+
+#top {
+    width:100%;
+    top:10;
+    overflow:hidden;
+}
+
+#middle {
+    color:white;
+    vertical-align:top;
+    padding-bottom: 200px;
+    overflow:hidden;
+}
+
+#bottom {
+    background-color:black;
+    bottom:0;
+    height:200px;
+    position:absolute;
+    overflow:hidden;
+}
+
+.newsimage {
+    margin-right:10px;
+}
+
