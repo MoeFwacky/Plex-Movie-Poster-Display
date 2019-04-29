@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<?php include('./control.php'); ?>
+<?php
+session_destroy();
+session_start();
+include('./control.php'); ?>
 <html lang="en" class="no-js" style="height:100%">
 	<head>
 		<style type="text/css">a {text-decoration: none}</style>
@@ -49,68 +52,25 @@
 			return xmlHttp.responseText;
 		}
 		</script>
-	<?php if (!empty($_POST)) {
-		$myfile = fopen("psConfig.php", "w") or die("Unable to open file!");
-		$txt = "<?php //Pseudo Channel
-		\$pseudochannel = '$_POST[pseudochannel]';
-		\n//Display Type
-		\$DisplayType = '$_POST[DisplayType]';
-		?>
-		";
-		echo  $txt;
-		fwrite($myfile, $txt);
-		fclose($myfile);
-		$update = "1";
-
-	} ?>
-<?php include_once('config.php');
-if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
-        $halfstatus = "checked";
-        $fullstatus = "";
-} elseif ($DisplayType =="full" || $_POST['DisplayType'] == "full") {
-	$halfstatus = "";
-	$fullstatus = "checked";
-} else {
-	$halfstatus = "";
-	$fullstatus = "";
-}
-?>
 	</head>
 	<body>
+		<p style="top:100px"><?php echo $plexClientName; ?></p>
+		<?php
+		if (isset($_GET['ch'])) {
+			$id= "ch" . $_GET['ch'];
+		} else {
+			$id="rightnow";
+		}
+		if (isset($_GET['tv'])) {
+			$_SESSION['tv'] = $_GET['tv'];
+		} else {
+			$_SESSION['tv'] = $plexClientName;
+		}
+		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">
-			<div class="container" style="position:absolute;top:60px" scrolling="no"><h3 style="color:white" class="gn-icon gn-icon-cog">Settings</h3>
-			<div class="container" name="schedulearea" type="text/html";>
-			<form method="post">
-			<div class="container" name="schedulearea" type="text/html";>
-			<label style="padding-left:10px;padding-right:5px;color:white">Pseudo Channel Directory: </label></br>&nbsp;&nbsp;&nbsp;
-			<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannel"; ?>"></br></br>
-			<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
-			<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
-			<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a></div>
-			<div style="padding-left:50px">
-			<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
-			</div>
-			<?php if($update == "1") {
-				echo "<div class='alert alert-info' style='color:white;padding-left:50px'>Settings File Updated.</div>";
-			} ?>
-			</form>
-			</div>
-			<div class="dripdrop" style="color:white;padding-left:10px"></br>
-			<a class="dripdrop-title">Plex Server and Client Data</a></br></br>
-			<a class="dripdrop-header">Plex Server IP Address:</a></br>
-			<a><?php echo $plexServer; ?></a></br></br>
-			<a class="dripdrop-header">Plex Server Web Port:</a></br>
-			<a><?php echo $plexport; ?></a></br></br>
-			<a class="dripdrop-header">Plex Server Web Token:</a></br>
-			<a><?php echo $plexToken; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Name:</a></br>
-			<a><?php echo $plexClientName; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Local IP Address:</a></br>
-			<a><?php echo $plexClientIP; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Unique Identifier</a></br>
-			<a><?php echo $plexClientUID; ?></a>
-			</div>
+			<div class="container" style="position:absolute;top:60px" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By</p>
+			<div id="<?php echo $id; ?>" class="container" name="schedulearea" type="text/html";></div>
 			<ul id="gn-menu" class="gn-menu-main">
 				<li class="gn-trigger">
 					<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
