@@ -39,9 +39,8 @@ $chnum = str_replace("/running.pid", "",$channel_number); //strip running.pid fr
 $chnum = trim($chnum);
 
 //GET ALL PSEUDO CHANNEL DAILY SCHEDULE XML FILE LOCATIONS
-$lsgrep = exec("find ". $pseudochannel . "pseudo-channel_*/schedules | grep xml | tr '\n' ','"); //list the paths of all daily schedule xml files in a comma separated list
+$lsgrep = exec("find ". $pseudochannelMaster . "pseudo-channel_*/schedules | grep xml | tr '\n' ','"); //list the paths of all daily schedule xml files in a comma separated list
 $dircontents = explode(",", $lsgrep); //write file locations into an array
-$ps_search = rtrim($pseudochannel, '/'); //strip trailing slash from pseudo channel root folder to enable search for other client setups
 
 // LINE STYLE VARIABLES
 if ($DisplayType == 'half') {
@@ -114,7 +113,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 
   if ($xml['size'] != '0') { //IF PLAYING CONTENT
       foreach ($xml->Video as $clients) {
-          if(strstr($clients->Player['address'], $plexClient)) { //If the active client on plex matches the client in the config
+          if(strstr($clients->Player['title'], $plexClientName)) { //If the active client on plex matches the client in the config
 			    //IF PLAYING COMMERCIAL
 				if($clients['type'] == "movie" && $clients['duration'] < 1800000) {
 	          			#$text_color='cyan';
@@ -185,7 +184,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 		$duration_seconds = $duration_seconds-1;
 		$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
 		$end_time_human = date("H:i", $end_time_unix); //end time in readable format
-		$ch_file = str_replace($pseudochannel . "pseudo-channel_", "ch", $xmlfile); //get channel number
+		$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
 		$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
 		$ch_number = str_replace("ch", "", $ch_file);
 		if ($doheader != "1") {
