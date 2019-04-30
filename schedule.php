@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <?php
-session_destroy();
 session_start();
-include('./control.php'); ?>
+include('./control.php');
+include('./config.php');
+$tvlocations = glob($pseudochannelTrim . "*", GLOB_ONLYDIR);
+foreach ($tvlocations as $tvbox) {
+	if ($tvbox . "/"  == $pseudochannelMaster) {
+		$boxname = $configClientName;
+		$boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
+	} else {
+		$boxname = trim($tvbox, $pseudochannelTrim . "_");
+		$boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
+	}
+}
+?>
 <html lang="en" class="no-js" style="height:100%">
 	<head>
 		<style type="text/css">a {text-decoration: none}</style>
@@ -63,13 +74,15 @@ include('./control.php'); ?>
 		}
 		if (isset($_GET['tv'])) {
 			$_SESSION['tv'] = $_GET['tv'];
+			$urlstring = "tv=" . $_GET['tv'] . "&";
+			$_SESSION['urlstring'] = $urlstring;
 		} else {
 			$_SESSION['tv'] = $plexClientName;
 		}
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">
-			<div class="container" style="position:absolute;top:60px" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By</p>
+			<div class="container" style="position:absolute;top:60px" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By<? php echo $plexClientName; ?></p>
 			<div id="<?php echo $id; ?>" class="container" name="schedulearea" type="text/html";></div>
 			<ul id="gn-menu" class="gn-menu-main">
 				<li class="gn-trigger">
@@ -77,15 +90,15 @@ include('./control.php'); ?>
 					<nav class="gn-menu-wrapper">
 						<div class="gn-scroller">
 							<ul class="gn-menu">
-								<li><a href="schedule.php" class="gn-icon gn-icon-videos">Now Playing</a></li>
-								<li><a href="adminConfig.php" class="gn-icon gn-icon-cog">Settings</a></li>
+								<li><a href="adminConfig.php?<?php echo $urlstring;?>" class="gn-icon gn-icon-cog">Settings</a></li>
+								<?php echo $boxes; ?>
 							</ul>
 						</div><!-- /gn-scroller -->
 					</nav>
 				</li>
-				<li><a class="codrops-icon" href="schedule.php?action=up">Up</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=down">Down</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=stop">Stop</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=up&<?php echo $urlstring; ?>">Up</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=down&<?php echo $urlstring; ?>">Down</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=stop&<?php echo $urlstring; ?>">Stop</a></li>
 				<li></li>
 			</ul>
 		</div><!-- /container -->
