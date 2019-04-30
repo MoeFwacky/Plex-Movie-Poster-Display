@@ -13,6 +13,13 @@ foreach ($tvlocations as $tvbox) {
 		$boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
 	}
 }
+$clientcount = 1;
+foreach ($clientsxml->Server as $key => $xmlarray) {
+	$clientinfodump .= "<a class='dripdrop-header'>Plex Client #$clientcount</a></br><a class='dripdrop-header'>Name:</a></br><a href='schedule.php?tv=$xmlarray[name]' style='color:white'> $xmlarray[name] </a></br></br>";
+	$clientinfodump .= "<a class='dripdrop-header'>Local IP Address:</a></br><a> $xmlarray[address] </a></br></br>";
+	$clientinfodump .= "<a class='dripdrop-header'>Unique Identifier</a></br><a> $xmlarray[machineIdentifier] </a></br></br>";
+	$clientcount = $clientcount + 1;
+	}
 ?>
 <html lang="en" class="no-js" style="height:100%">
 	<head>
@@ -118,12 +125,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 			<a><?php echo $plexport; ?></a></br></br>
 			<a class="dripdrop-header">Plex Server Web Token:</a></br>
 			<a><?php echo $plexToken; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Name:</a></br>
-			<a><?php echo $plexClientName; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Local IP Address:</a></br>
-			<a><?php echo $plexClientIP; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Unique Identifier</a></br>
-			<a><?php echo $plexClientUID; ?></a>
+			<?php echo $clientinfodump; ?>
 			</div>
 			<ul id="gn-menu" class="gn-menu-main">
 				<li class="gn-trigger">
