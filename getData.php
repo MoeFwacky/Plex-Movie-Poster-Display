@@ -1,5 +1,6 @@
 <?php
 include 'config.php'; //Get variables from config
+include 'control.php';
 $results = Array();
 if (isset($_GET['tv'])) {
         $plexClientName = $_GET['tv'];
@@ -55,7 +56,7 @@ if ($DisplayType == 'half') {
 
 if ($DisplayType == 'full') {
       foreach ($xml->Video as $playdata) {
-          if(strstr($playdata->Player['address'], $plexClient)) {
+          if($playdata->Player['title'] == $plexClientName) {
 			$video_duration = (int)$playdata['duration'];
 			if($playdata['type'] == "movie") {
 				if ($video_duration < "1800000") { //COMMERCIAL
@@ -113,7 +114,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 
   if ($xml['size'] != '0') { //IF PLAYING CONTENT
       foreach ($xml->Video as $clients) {
-          if(strstr($clients->Player['title'], $plexClientName)) { //If the active client on plex matches the client in the config
+          if($clients->Player['title'] == $plexClientName) { //If the active client on plex matches the client in the config
 			    //IF PLAYING COMMERCIAL
 				if($clients['type'] == "movie" && $clients['duration'] < 1800000) {
 	          			#$text_color='cyan';
@@ -128,7 +129,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$middle_section = $top_line . $clients['librarySectionTitle'] . "</p>";
 					$bottom_section = "<p></p>";
 					$title_clean = str_replace("_", " ", $clients['title']);
-					$nowplaying = "<a href='schedule.php' style='color:white'>Now Playing: " . $title_clean . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $title_clean . " on Channel ". $channel_num . "</a>";
 				}
 				//IF PLAYING MOVIE
 				if($clients['type'] == "movie" && $clients['duration'] >= 1800000) {
@@ -148,7 +149,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$top_section = $background_art . $time_style . $date . $side_channel . "</p>" . $position;
 					$middle_section = $top_line . $clients['title'] . $middle_line . $clients['year'] . "</p>";
 					$bottom_section = $bottom_line . $clients['tagline'] . "</p>";
-					$nowplaying = "<a href='schedule.php' style='color:white'>Now Playing: " . $clients['title'] . " (" . $clients['year'] . ")" . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $clients['title'] . " (" . $clients['year'] . ")" . " on Channel ". $channel_num . "</a>";
 				}
 				//IF PLAYING TV SHOW
 				if($clients['type'] == "show" || $clients['parentTitle'] != "") {
@@ -167,7 +168,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$top_section =  $background_art . $time_style . $date . "</p>" . $position;
 					$middle_section = $top_line . $clients['grandparentTitle'] . "</p>" . $middle_line . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
 					$bottom_section = $bottom_line . $clients['title'] . "</p>" . $side_channel . "</p>";
-					$nowplaying = "<a href='schedule.php' style='color:white'>Now Playing: " . $clients['grandparentTitle'] . " • " . $clients['parentTitle'] . ", Episode " . $clients['index'] . " • " . $clients['title'] . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $clients['grandparentTitle'] . " • " . $clients['parentTitle'] . ", Episode " . $clients['index'] . " • " . $clients['title'] . " on Channel ". $channel_num . "</a>";
 					}
 				}
 		  }
@@ -199,9 +200,9 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			$channelplaying = "";
 		}
 		if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
-			$nowtable .= "<tr><td><a style='$channelplaying;display:block; width:100%' href='schedule.php?ch=$ch_number'>" . $ch_number . "</a></td>";
+			$nowtable .= "<tr><td><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
 			$nowtable .= "<td style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-			$nowtable .= "<td style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?action=channel&num=$ch_number'>&nbsp";
+			$nowtable .= "<td style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
 			if ($attributes['type'] == "TV Shows") {
 				$nowtable .= $attributes['show-title'];
 				$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
@@ -212,7 +213,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			}
 		}
 		if ($results[$ch_file] == "") {
-			$results[$ch_file] = $chantableheader . "<a href='schedule.php?action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
+			$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
 		}
 		if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
 			$isnowplaying = "font-weight:bold;font-size:1.2em";

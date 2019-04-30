@@ -1,5 +1,19 @@
 <!DOCTYPE html>
-<?php include('./control.php'); ?>
+<?php
+session_start();
+include('./control.php');
+include('./config.php');
+$tvlocations = glob($pseudochannelTrim . "*", GLOB_ONLYDIR);
+foreach ($tvlocations as $tvbox) {
+        if ($tvbox . "/"  == $pseudochannelMaster) {
+                $boxname = $configClientName;
+                $boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
+        } else {
+		$boxname = trim($tvbox, $pseudochannelTrim . "_");
+		$boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
+	}
+}
+?>
 <html lang="en" class="no-js" style="height:100%">
 	<head>
 		<style type="text/css">a {text-decoration: none}</style>
@@ -84,7 +98,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 			<form method="post">
 			<div class="container" name="schedulearea" type="text/html";>
 			<label style="padding-left:10px;padding-right:5px;color:white">Pseudo Channel Directory: </label></br>&nbsp;&nbsp;&nbsp;
-			<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannel"; ?>"></br></br>
+			<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannelMaster"; ?>"></br></br>
 			<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
 			<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
 			<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a></div>
@@ -97,7 +111,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 			</form>
 			</div>
 			<div class="dripdrop" style="color:white;padding-left:10px"></br>
-			<a class="dripdrop-title">Plex Server and Client Data</a></br></br>
+			<a class="dripdrop-title">Plex Server and Primary Client Data</a></br></br>
 			<a class="dripdrop-header">Plex Server IP Address:</a></br>
 			<a><?php echo $plexServer; ?></a></br></br>
 			<a class="dripdrop-header">Plex Server Web Port:</a></br>
@@ -117,15 +131,15 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 					<nav class="gn-menu-wrapper">
 						<div class="gn-scroller">
 							<ul class="gn-menu">
-								<li><a href="schedule.php" class="gn-icon gn-icon-videos">Now Playing</a></li>
-								<li><a href="adminConfig.php" class="gn-icon gn-icon-cog">Settings</a></li>
+								<li><a href="adminConfig.php?<?php echo $urlstring; ?>" class="gn-icon gn-icon-cog">Settings</a></li>
+								<?php echo $boxes; ?>
 							</ul>
 						</div><!-- /gn-scroller -->
 					</nav>
 				</li>
-				<li><a class="codrops-icon" href="schedule.php?action=up">Up</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=down">Down</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=stop">Stop</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=up?<?php echo $urlstring; ?>">Up</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=down?<?php echo $urlstring; ?>">Down</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=stop?<?php echo $urlstring; ?>">Stop</a></li>
 				<li></li>
 			</ul>
 		</div><!-- /container -->

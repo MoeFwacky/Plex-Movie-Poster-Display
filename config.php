@@ -30,14 +30,19 @@ $configClientName = $getConfig[40];
 $configClientName = trim($configClientName, 'plexClients = ["');
 $configClientName = str_replace('"]','',$configClientName);
 $configClientName = trim($configClientName);
+$pseudochannelMaster = $pseudochannel;
+$pseudochannelMaster = trim($pseudochannelMaster);
 $pseudochannelTrim = rtrim($pseudochannel,'/');
 $plexClientName = $configClientName;
 if (isset($_SESSION['tv'])) {
 	$plexClientName = $_SESSION['tv'];
+	$urlstring = "tv=" . $_SESSION['tv'] . "&";
         if ($_SESSION['tv'] != $configClientName) {
 		$pseudochannel = $pseudochannelTrim . "_" . $_SESSION['tv'] . "/";
 		$pseudochannel = trim($pseudochannel);
 	}
+} else {
+	$urlstring = "";
 }
 
 
