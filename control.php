@@ -1,11 +1,11 @@
 <?php
 function Channel() {
 include('config.php');
-if(empty($_GET["tv"])) {
-        $ps = "$pseudochannel";
+if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
+        $ps = "$pseudochannelMaster";
 } else {
 	$pseudochannel = substr($pseudochannel, 0, -1);
-        $ps = "$pseudochannel" . "_" . $_GET["tv"];
+        $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	$channel_number = $_GET["num"];
 	ob_start();
@@ -14,11 +14,11 @@ if(empty($_GET["tv"])) {
 }
 function stopAllChannels() {
 include('config.php');
-if(empty($_GET["tv"])) {
-        $ps = "$pseudochannel";
+if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
+        $ps = "$pseudochannelMaster";
 } else {
 	$pseudochannel = substr($pseudochannel, 0, -1);
-        $ps = "$pseudochannel" . "_" . $_GET["tv"];
+        $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
 	echo exec("cd " . "$ps" . " && sudo /bin/bash stop-all-channels.sh");
@@ -26,11 +26,11 @@ if(empty($_GET["tv"])) {
 }
 function channel_down() {
 include('config.php');
-if(empty($_GET["tv"])) {
-        $ps = "$pseudochannel";
+if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
+        $ps = "$pseudochannelMaster";
 } else {
 	$pseudochannel = substr($pseudochannel, 0, -1);
-        $ps = "$pseudochannel" . "_" . $_GET["tv"];
+        $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
         echo exec("cd " . "$ps" . " && sudo /bin/bash channeldown.sh");
@@ -38,11 +38,11 @@ if(empty($_GET["tv"])) {
 }
 function channel_up() {
 include('config.php');
-if(empty($_GET["tv"])) {
-        $ps = "$pseudochannel";
+if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
+        $ps = "$pseudochannelMaster";
 } else {
 	$pseudochannel = substr($pseudochannel, 0, -1);
-        $ps = "$pseudochannel" . "_" . $_GET["tv"];
+        $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
         echo exec("cd " . "$ps" . " && sudo /bin/bash channelup.sh");
