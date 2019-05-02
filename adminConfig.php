@@ -15,7 +15,7 @@ foreach ($tvlocations as $tvbox) {
 }
 $clientcount = 1;
 foreach ($clientsxml->Server as $key => $xmlarray) {
-	$clientinfodump .= "<a class='dripdrop-header'>Plex Client #$clientcount</a></br><a class='dripdrop-header'>Name:</a></br><a href='schedule.php?tv=$xmlarray[name]' style='color:white'> $xmlarray[name] </a></br></br>";
+	$clientinfodump .= "<a class='dripdrop-title'>Plex Client #$clientcount</a></br><a class='dripdrop-header'>Name:</a></br><a href='schedule.php?tv=$xmlarray[name]' style='color:white'> $xmlarray[name] </a></br></br>";
 	$clientinfodump .= "<a class='dripdrop-header'>Local IP Address:</a></br><a> $xmlarray[address] </a></br></br>";
 	$clientinfodump .= "<a class='dripdrop-header'>Unique Identifier</a></br><a> $xmlarray[machineIdentifier] </a></br></br>";
 	$clientcount = $clientcount + 1;
@@ -118,12 +118,12 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 			</form>
 			</div>
 			<div class="dripdrop" style="color:white;padding-left:10px"></br>
-			<a class="dripdrop-title">Plex Server and Primary Client Data</a></br></br>
-			<a class="dripdrop-header">Plex Server IP Address:</a></br>
+			<a class="dripdrop-title">Plex Server Data</a></br></br>
+			<a class="dripdrop-header">IP Address:</a></br>
 			<a><?php echo $plexServer; ?></a></br></br>
-			<a class="dripdrop-header">Plex Server Web Port:</a></br>
+			<a class="dripdrop-header">Web Port:</a></br>
 			<a><?php echo $plexport; ?></a></br></br>
-			<a class="dripdrop-header">Plex Server Web Token:</a></br>
+			<a class="dripdrop-header">Web Token:</a></br>
 			<a><?php echo $plexToken; ?></a></br></br>
 			<?php echo $clientinfodump; ?>
 			</div>
@@ -133,6 +133,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 					<nav class="gn-menu-wrapper">
 						<div class="gn-scroller">
 							<ul class="gn-menu">
+								<li><a href="index.php" class="gn-icon gn-icon-help">Home</a></li>
 								<li><a href="adminConfig.php?<?php echo $urlstring; ?>" class="gn-icon gn-icon-cog">Settings</a></li>
 								<?php echo $boxes; ?>
 							</ul>
