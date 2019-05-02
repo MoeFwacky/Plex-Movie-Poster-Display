@@ -65,7 +65,6 @@ foreach ($clientsxml->Server as $key => $xmlarray) {
 		function channel() {
 			<?php $id="$ch_file"; ?>
 		}
-		setInterval(autorefresh_div, 3000);
 		function httpGet(theUrl)
 		{
 			var xmlHttp = new XMLHttpRequest();
