@@ -137,12 +137,12 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$text_color_alt='white';
 			        if ($DisplayType == 'half') {
 						$art = $clients['thumb'];
-						$background_art	= "<img position: fixed; margin-top: 10; top: 10px; src='http:\/\/$plexServer:$plexport$art' width='130';'>";
+						$background_art	= "<img position: fixed; margin-top: 10; top: 10px; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130';'>";
 						$position=$position_half;
 					}
 					if ($DisplayType == 'full') {
 						$art = $clients['art'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art'; width='480';>";
+						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='480';>";
 						$position=$position_play_full;
 					}
 
@@ -155,12 +155,12 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 				if($clients['type'] == "show" || $clients['parentTitle'] != "") {
 					if ($DisplayType == 'half') {
 						$art = $clients['parentThumb'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art'; width='130';>";
+						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='130';>";
 						$position=$position_half;
 					}
 					if ($DisplayType == 'full') {
 						$art = $clients['grandparentArt'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art'; width='480';>";
+						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='480';>";
 						$position=$position_play_full;
 						$text_color='yellow';
 						$text_color_alt='white';
