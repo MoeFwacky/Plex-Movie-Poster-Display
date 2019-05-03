@@ -15,6 +15,7 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
  - A functioning Plex Server
  - Web Server – I am running Apache, but nginx or whatever else you prefer will work just fine.
  - PHP – I am running version  5.6.30
+ - Other elements to read xml strings. For exact dependencies, see the install_dependencies.sh file.
  - Your X-Plex-Token. https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
 
 ## Features 
@@ -24,9 +25,16 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
 - Web Frontend for configuration
 
 ## Installation
+- If you don't have apache installed already, do that first (sudo apt-get install apache2)
 - Copy all the files into the root of your web server, or desired subfolder if running multiple instances (one copy per instance).
-- Fix permission on config.php file. (chmod 777 config.php)
-- Open the URL to your server in a browser and configure. http://SERVER_IP_ADDRESS/admin.php or http://SERVER_IP_ADDRESS/path/admin.php
+- Change permissions on certain files.
+-- Edit permissions of html folder (sudo chmod -R 777 /var/www/html)
+-- Edit permissions of main channel folders (sudo chmod -R 777 <Home Directory Goes here>/channels(_NAME if necessary)
+- Add www-data as a sudo user, so they can run certain controls
+-- Add the line "www-data ALL=(ALL) NOPASSWD: ALL" to the file /etc/sudoers (This can be done with an editing program like nano and sudo permissions)
+- Run the dependencies file to ensure everything is up to date (sudo /var/www/html/install_dependencies.sh)
+- Test that the output works
+-- Open the URL to your server in a browser and configure. http://SERVER_IP_ADDRESS/adminConfig.php or http://SERVER_IP_ADDRESS/path/adminConfig.php
 
 ## Upgrading
 - Check permissions on cache and config.php.
