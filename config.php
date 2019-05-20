@@ -44,8 +44,11 @@ if (isset($_SESSION['tv'])) {
 } else {
 	$urlstring = "";
 }
-
-
+if (isset($_SESSION['size'])) {
+	$DisplayType=$_SESSION['size'];
+} else {
+	$_SESSION['size'] = $DisplayType;
+}
 //Get Other Plex Client Data from Plex API
 $clientsurl = "http://" . $plexServer . ":" . $plexport . "/clients?X-Plex-Token=" . $plexToken;
 $getclientsxml = file_get_contents($clientsurl);

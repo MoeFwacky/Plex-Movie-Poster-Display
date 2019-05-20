@@ -36,7 +36,11 @@ foreach ($tvlocations as $tvbox) {
 		<meta name="msapplication-config" content="assets/browserconfig.xml">
 		<meta name="theme-color" content="#ffffff">
 		<script src="js/modernizr.custom.js"></script>
-		<script type="text/javascript" src="assets/js/jquery-3.0.0.min.js"></script>
+		<script
+	    src="https://code.jquery.com/jquery-2.2.4.min.js"
+	    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+	    crossorigin="anonymous">
+	    </script>
 		<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 		<script>
 		        $(document).ready(
@@ -54,7 +58,6 @@ foreach ($tvlocations as $tvbox) {
 		function channel() {
 			<?php $id="$ch_file"; ?>
 		}
-		setInterval(autorefresh_div, 3000);
 		function httpGet(theUrl)
 		{
 			var xmlHttp = new XMLHttpRequest();
@@ -90,6 +93,7 @@ foreach ($tvlocations as $tvbox) {
 					<nav class="gn-menu-wrapper">
 						<div class="gn-scroller">
 							<ul class="gn-menu">
+								<li><a href="index.php" class="gn-icon gn-icon-help">Home</a></li>
 								<li><a href="adminConfig.php?<?php echo $urlstring;?>" class="gn-icon gn-icon-cog">Settings</a></li>
 								<?php echo $boxes; ?>
 							</ul>
