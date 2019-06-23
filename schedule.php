@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-session_start();
+//session_start();
 include('./control.php');
 include('./config.php');
 $tvlocations = glob($pseudochannelTrim . "*", GLOB_ONLYDIR);
@@ -78,6 +78,7 @@ foreach ($tvlocations as $tvbox) {
 	<body>
 		<p style="top:100px"><?php echo $plexClientName; ?></p>
 		<?php
+		session_start();
 		if (isset($_GET['ch'])) {
 			$id= "ch" . $_GET['ch'];
 		} else {
@@ -90,6 +91,7 @@ foreach ($tvlocations as $tvbox) {
 		} else {
 			$_SESSION['tv'] = $plexClientName;
 		}
+		session_write_close();
 		?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">

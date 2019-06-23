@@ -25,8 +25,8 @@
             });
     </script>
 <?php
-session_start();
 include('./config.php');
+session_start();
 if (isset($_GET['size'])) {
 	$_SESSION['size'] = $_GET['size'];
 	$DisplayType=$_GET['size'];
@@ -53,6 +53,7 @@ if (isset($_GET['tv'])) {
 } else {
 	$_SESSION['tv'] = $plexClientName;
 }
+session_write_close();
 ?>
 
     </head>
