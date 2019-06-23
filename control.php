@@ -48,7 +48,14 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         echo exec("cd " . "$ps" . " && sudo /bin/bash channelup.sh");
 	ob_end_clean();
 }
-
+function databaseUpdate() {
+include('config.php');
+$ps = "$pseudochannelMaster";
+	ob_start();
+	echo exec("cd " . "$ps" . " && sudo /bin/bash globalupdate.sh");
+	echo exec("sudo /bin/bash updatexml.sh");
+	ob_end_clean();
+}
 switch($_GET['action']) {
         case 'stop':
                 stopAllChannels();
@@ -61,6 +68,9 @@ switch($_GET['action']) {
 	break;
 	case 'up':
 		channel_up();
+	break;
+	case 'update':
+		databaseUpdate();
 	break;
 }
 
