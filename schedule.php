@@ -4,6 +4,7 @@
 include('./control.php');
 include('./config.php');
 $tvlocations = glob($pseudochannelTrim . "*", GLOB_ONLYDIR);
+$boxes = '';
 foreach ($tvlocations as $tvbox) {
 	if ($tvbox . "/"  == $pseudochannelMaster) {
 		$boxname = $configClientName;
