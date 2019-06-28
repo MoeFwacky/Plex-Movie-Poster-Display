@@ -195,7 +195,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			$doheader = "1";
 		}
 		if ($chnum == $ch_number) {
-			$channelplaying = "font-weight:bold;font-size:1.1em";
+			$channelplaying = "color:#f4ff96";
 		} else {
 			$channelplaying = "";
 		}
@@ -216,7 +216,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
 		}
 		if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
-			$isnowplaying = "font-weight:bold;font-size:1.2em";
+			$isnowplaying = "color:#f4ff96";
 		} else {
 			$isnowplaying = "";
 		}
