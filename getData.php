@@ -196,13 +196,15 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 		}
 		if ($chnum == $ch_number) {
 			$channelplaying = "color:#f4ff96";
+			$channelPlayingRowClass = "now-playing-highlight-me";
 		} else {
 			$channelplaying = "";
+			$channelPlayingRowClass = "";
 		}
 		if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
-			$nowtable .= "<tr><td><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
-			$nowtable .= "<td style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-			$nowtable .= "<td style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
+			$nowtable .= "<tr><td class='$channelPlayingRowClass'><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
+			$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+			$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
 			if ($attributes['type'] == "TV Shows") {
 				$nowtable .= $attributes['show-title'];
 				$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";

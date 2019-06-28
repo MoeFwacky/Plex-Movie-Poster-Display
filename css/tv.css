@@ -617,6 +617,11 @@ table.schedule-table, td:hover{
 	font-family:"overpass-regular";
 }
 
+.schedule-table .now-playing-highlight-me {
+    background-color: #333;
+    color: #f4ff96!important;
+}
+
 .schedule-table a:link { 
         color:white;
 }

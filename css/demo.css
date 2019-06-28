@@ -202,6 +202,16 @@ body {
 	color:'white';
 }
 
+th {
+    padding: 5px 10px;
+    font-weight: normal!important;
+    border:1px solid white; 
+}
+
+table {
+    border: none!important;
+}
+
 .indexpage {
 	color: 'white';
 	font-family: 'overpass-regular';
@@ -274,9 +284,13 @@ table.schedule-table, td:hover{
 }
 
 .schedule-table a:hover {
-	text-shadow:1px 1 1 currentColor;
-	font-family:"overpass-heavy";
-        color:white;
+	color:#f4ff96!important;
+	font-family:"overpass-regular";
+}
+
+.schedule-table .now-playing-highlight-me {
+    background-color: #333;
+    color: #f4ff96!important;
 }
 
 .schedule-table a:link { 
