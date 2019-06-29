@@ -257,7 +257,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			}
 
 			try {
-				if ($results[$ch_file] == "") {
+				if (!isset($results[$ch_file]) || $results[$ch_file] == "") {
 					$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
 				}
 		        
