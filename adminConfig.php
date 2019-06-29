@@ -133,8 +133,8 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 				<a class="dripdrop-header">Web Token:</a></br>
 				<a><?php echo $plexToken; ?></a></br></br>
 				<?php echo $clientinfodump; ?>
-				<div style="padding-left:50px">
-					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">Purge Favicon Cache</a>
+				<div style="">
+					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">&#8594; Purge Favicon Cache</a>
 				</div>
 			</div>
 			<ul id="gn-menu" class="gn-menu-main">
