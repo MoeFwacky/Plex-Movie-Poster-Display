@@ -283,6 +283,11 @@ table.schedule-table, td:hover{
 	background-color:#34495e;
 }
 
+.schedule-table .schedule-channel-favicon {
+	max-height: 50px;
+	width: auto;
+}
+
 .schedule-table a:hover {
 	color:#f4ff96!important;
 	font-family:"overpass-regular";

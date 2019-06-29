@@ -193,6 +193,24 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
 			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
 			$ch_number = str_replace("ch", "", $ch_file);
+			$favicon_local_path = './favicons/favicon_'.$ch_number.'.png';
+			$favicon_img_tag = "";
+			if (!file_exists('./favicons')) {
+			    mkdir('./favicons', 0777, true);
+			}
+			if(!file_exists($favicon_local_path)){
+				if(file_exists($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon.png')){
+					copy($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon.png', $favicon_local_path);
+					
+				}
+			}
+
+			if(file_exists($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon.png')){
+				$favicon_img_tag = "<img class='schedule-channel-favicon' src='$favicon_local_path'>";
+			}else{
+				$favicon_img_tag = "";
+			}
+			
 			if ($doheader != "1") {
 				$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
 				$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
@@ -206,8 +224,9 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 				$channelplaying = "";
 				$channelPlayingRowClass = "";
 			}
+			$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
 			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
-				$nowtable .= "<tr><td class='$channelPlayingRowClass'><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
+				$nowtable .= "<tr><td class='$channelPlayingRowClass'><span class='favicon-container'><a style='$channelplaying' href='schedule.php?" . $urlstring . "ch=$ch_number'>$favicon_img_tag<span class='ch_number'>" . $ch_number_for_html . "</span></a></span></td>";
 				$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
 				$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
 				if ($attributes['type'] == "TV Shows") {
