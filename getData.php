@@ -176,69 +176,81 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 
 //BUILD DAILY SCHEDULE PAGES
 $doheader = "0";
+$ch_file = "";
+$nowtable = "";
 foreach ($dircontents as $xmlfile) { //do the following for each xml schedule file
-	$xmldata = simplexml_load_file($xmlfile); //load the xml schedule file
-	foreach($xmldata->time as $attributes) { //for each entry in the schedule, do the following
-		$start_time_unix = strtotime($attributes['time-start']); //get the entry start time
-	    	$start_time_human = date("H:i", $start_time_unix); //convert start time to readable format
-		$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
-		$duration_seconds = $duration_seconds-1;
-		$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
-		$end_time_human = date("H:i", $end_time_unix); //end time in readable format
-		$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
-		$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
-		$ch_number = str_replace("ch", "", $ch_file);
-		if ($doheader != "1") {
-			$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
-			$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
-			$nowtable = $tableheader;
-			$doheader = "1";
-		}
-		if ($chnum == $ch_number) {
-			$channelplaying = "color:#f4ff96";
-			$channelPlayingRowClass = "now-playing-highlight-me";
-		} else {
-			$channelplaying = "";
-			$channelPlayingRowClass = "";
-		}
-		if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
-			$nowtable .= "<tr><td class='$channelPlayingRowClass'><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
-			$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-			$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
-			if ($attributes['type'] == "TV Shows") {
-				$nowtable .= $attributes['show-title'];
-				$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-			} elseif ($attributes['type'] == "Commercials") {
-				$nowtable .= $attributes['type'] . "</td>";
-			} else {
-				$nowtable .= $attributes['title'] . "</a></td>";
+	if($xmlfile){
+		$xmldata = simplexml_load_file($xmlfile); //load the xml schedule file
+	}
+	if($xmldata){
+		foreach($xmldata->time as $attributes) { //for each entry in the schedule, do the following
+			$start_time_unix = strtotime($attributes['time-start']); //get the entry start time
+		    	$start_time_human = date("H:i", $start_time_unix); //convert start time to readable format
+			$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
+			$duration_seconds = $duration_seconds-1;
+			$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
+			$end_time_human = date("H:i", $end_time_unix); //end time in readable format
+			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
+			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
+			$ch_number = str_replace("ch", "", $ch_file);
+			if ($doheader != "1") {
+				$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
+				$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
+				$nowtable = $tableheader;
+				$doheader = "1";
 			}
-		}
-		if ($results[$ch_file] == "") {
-			$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
-		}
-		if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
-			$isnowplaying = "color:#f4ff96";
-		} else {
-			$isnowplaying = "";
-		}
-		if ($attributes['type'] != "Commercials") {
-			$results[$ch_file] .= "<tr>";
-			$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-			$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
-			if ($attributes['type'] == "TV Shows") {
-				$results[$ch_file] .= $attributes['show-title'];
-				$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-			} elseif ($attributes['type'] == "Commercials") {
-				$results[$ch_file] .= $attributes['type'] . "</td>";
+			if ($chnum == $ch_number) {
+				$channelplaying = "color:#f4ff96";
+				$channelPlayingRowClass = "now-playing-highlight-me";
 			} else {
-				$results[$ch_file] .= $attributes['title'] . "</td>";
+				$channelplaying = "";
+				$channelPlayingRowClass = "";
+			}
+			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
+				$nowtable .= "<tr><td class='$channelPlayingRowClass'><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
+				$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+				$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
+				if ($attributes['type'] == "TV Shows") {
+					$nowtable .= $attributes['show-title'];
+					$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
+				} elseif ($attributes['type'] == "Commercials") {
+					$nowtable .= $attributes['type'] . "</td>";
+				} else {
+					$nowtable .= $attributes['title'] . "</a></td>";
+				}
+			}
+			if (isset($results[$ch_file])) {
+				if ($results[$ch_file] == "") {
+					$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
+				}
+			}
+			if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
+				$isnowplaying = "color:#f4ff96";
+			} else {
+				$isnowplaying = "";
+			}
+			if ($attributes['type'] != "Commercials") {
+				if (isset($results[$ch_file])) {
+					$results[$ch_file] .= "<tr>";
+					$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+					$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
+					if ($attributes['type'] == "TV Shows") {
+						$results[$ch_file] .= $attributes['show-title'];
+						$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
+					} elseif ($attributes['type'] == "Commercials") {
+						$results[$ch_file] .= $attributes['type'] . "</td>";
+					} else {
+						$results[$ch_file] .= $attributes['title'] . "</td>";
+					}
+				}
 			}
 		}
 	}
 }
 $nowtable .= "</table>";
-$results[$ch_file] .= "</table>";
+if (isset($results[$ch_file])) {
+	$results[$ch_file] .= "</table>";
+}
 $results['rightnow'] = $nowtable;
 $results['top'] = "$top_section";
 $results['middle'] = "$middle_section $bottom_section";

@@ -20,7 +20,7 @@ foreach ($tvlocations as $tvbox) {
 		<style type="text/css">a {text-decoration: none}</style>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0;">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>FakeTV Guide and Control</title>
 		<meta name="description" content="A page that works with Pseudo Channel and Plex to display now playing data and allow viewing and navigation of Pseudo Channel schedules" />
 		<link rel="shortcut icon" href="../favicon.ico">

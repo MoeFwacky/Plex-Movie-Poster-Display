@@ -54,11 +54,11 @@ $clientsurl = "http://" . $plexServer . ":" . $plexport . "/clients?X-Plex-Token
 $getclientsxml = file_get_contents($clientsurl);
 $clientsxml = simplexml_load_string($getclientsxml);
 foreach($clientsxml->Server as $key => $clientdata) {
-		$clientname = $clientdata[name];
+		$clientname = $clientdata['name'];
 		if($clientname == $plexClientName) {
-			$plexClientIP = $clientdata[address];
+			$plexClientIP = $clientdata['address'];
 			$plexClient = trim($plexClientIP);
-			$plexClientUID = $clientdata[machineIdentifier];
+			$plexClientUID = $clientdata['machineIdentifier'];
 		}
 }
 ?>
