@@ -36,6 +36,9 @@ foreach ($tvlocations as $tvbox) {
 		<meta name="msapplication-TileColor" content="#2b5797">
 		<meta name="msapplication-config" content="assets/browserconfig.xml">
 		<meta name="theme-color" content="#ffffff">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="js/classie.js"></script>
+		<script src="js/gnmenu.js"></script>
 		<script src="js/modernizr.custom.js"></script>
 		<script>
 		var query = window.location.search.substring(1)
@@ -77,7 +80,7 @@ foreach ($tvlocations as $tvbox) {
 		</script>
 	</head>
 	<body>
-		<p style="top:100px"><?php echo $plexClientName; ?></p>
+		
 		<?php
 		session_start();
 		if (isset($_GET['ch'])) {
@@ -94,9 +97,8 @@ foreach ($tvlocations as $tvbox) {
 		}
 		session_write_close();
 		?>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">
-			<div class="container" style="position:absolute;top:60px" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By<? php echo $plexClientName; ?></p>
+			<div class="container" style="" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By<? php echo $plexClientName; ?></p>
 			<div id="<?php echo $id; ?>" class="container" name="schedulearea" type="text/html";></div>
 			<ul id="gn-menu" class="gn-menu-main">
 				<li class="gn-trigger">
@@ -117,9 +119,9 @@ foreach ($tvlocations as $tvbox) {
 				<li><a class="codrops-icon" href="schedule.php?action=updateweb&<?php echo $urlstring; ?>">Update Web</a></li>
 				<li></li>
 			</ul>
+			<p style="top:100px"><?php echo $plexClientName; ?></p>
 		</div><!-- /container -->
-		<script src="js/classie.js"></script>
-		<script src="js/gnmenu.js"></script>
+		
 		<script>
 			new gnMenu( document.getElementById( 'gn-menu' ) );
 		</script>

@@ -210,7 +210,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			}else{
 				$favicon_img_tag = "";
 			}
-			
+
 			if ($doheader != "1") {
 				$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
 				$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
@@ -218,17 +218,14 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 				$doheader = "1";
 			}
 			if ($chnum == $ch_number) {
-				$channelplaying = "color:#f4ff96";
-				$channelPlayingRowClass = "now-playing-highlight-me";
+				$channelplaying = "font-weight:bold;font-size:1.1em";
 			} else {
 				$channelplaying = "";
-				$channelPlayingRowClass = "";
 			}
-			$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
 			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
 				$nowtable .= "<tr><td class='$channelPlayingRowClass'><span class='favicon-container'><a style='$channelplaying' href='schedule.php?" . $urlstring . "ch=$ch_number'>$favicon_img_tag<span class='ch_number'>" . $ch_number_for_html . "</span></a></span></td>";
-				$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-				$nowtable .= "<td class='$channelPlayingRowClass'style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
+				$nowtable .= "<td style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+				$nowtable .= "<td style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
 				if ($attributes['type'] == "TV Shows") {
 					$nowtable .= $attributes['show-title'];
 					$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
@@ -238,7 +235,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$nowtable .= $attributes['title'] . "</a></td>";
 				}
 			}
-			if (isset($results[$ch_file])) {
+			if (isset($results[$ch_file]) || $results[$ch_file] == "") {
 				if ($results[$ch_file] == "") {
 					$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
 				}
@@ -249,18 +246,16 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 				$isnowplaying = "";
 			}
 			if ($attributes['type'] != "Commercials") {
-				if (isset($results[$ch_file])) {
-					$results[$ch_file] .= "<tr>";
-					$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-					$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
-					if ($attributes['type'] == "TV Shows") {
-						$results[$ch_file] .= $attributes['show-title'];
-						$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-					} elseif ($attributes['type'] == "Commercials") {
-						$results[$ch_file] .= $attributes['type'] . "</td>";
-					} else {
-						$results[$ch_file] .= $attributes['title'] . "</td>";
-					}
+				$results[$ch_file] .= "<tr>";
+				$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+				$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
+				if ($attributes['type'] == "TV Shows") {
+					$results[$ch_file] .= $attributes['show-title'];
+					$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
+				} elseif ($attributes['type'] == "Commercials") {
+					$results[$ch_file] .= $attributes['type'] . "</td>";
+				} else {
+					$results[$ch_file] .= $attributes['title'] . "</td>";
 				}
 			}
 		}
