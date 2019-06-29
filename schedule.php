@@ -97,7 +97,8 @@ foreach ($tvlocations as $tvbox) {
 		}
 		session_write_close();
 		?>
-		<div id="container">
+		<div class="container main-container">
+			<p style="margin-top:75px;color:white"><?php echo $plexClientName; ?></p>
 			<div class="container" style="" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By<? php echo $plexClientName; ?></p>
 			<div id="<?php echo $id; ?>" class="container" name="schedulearea" type="text/html";></div>
 			<ul id="gn-menu" class="gn-menu-main">
@@ -119,7 +120,7 @@ foreach ($tvlocations as $tvbox) {
 				<li><a class="codrops-icon" href="schedule.php?action=updateweb&<?php echo $urlstring; ?>">Update Web</a></li>
 				<li></li>
 			</ul>
-			<p style="top:100px"><?php echo $plexClientName; ?></p>
+			
 		</div><!-- /container -->
 		
 		<script>
