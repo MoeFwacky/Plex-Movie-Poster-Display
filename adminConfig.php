@@ -147,6 +147,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 				<li><a class="codrops-icon" href="schedule.php?action=up?<?php echo $urlstring; ?>">Up</a></li>
 				<li><a class="codrops-icon" href="schedule.php?action=down?<?php echo $urlstring; ?>">Down</a></li>
 				<li><a class="codrops-icon" href="schedule.php?action=stop?<?php echo $urlstring; ?>">Stop</a></li>
+				<li><a class="codrops-icon" href="schedule.php?action=updateweb&<?php echo $urlstring; ?>">Update Web</a></li>
 				<li></li>
 			</ul>
 		</div><!-- /container -->
