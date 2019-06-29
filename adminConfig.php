@@ -104,32 +104,38 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 	<body>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">
-			<div class="container" style="position:absolute;top:60px" scrolling="no"><h3 style="color:white" class="gn-icon gn-icon-cog">Settings</h3>
-			<div class="container" name="schedulearea" type="text/html";>
-			<form method="post">
-			<div class="container" name="schedulearea" type="text/html";>
-			<label style="padding-left:10px;padding-right:5px;color:white">Pseudo Channel Directory: </label></br>&nbsp;&nbsp;&nbsp;
-			<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannelMaster"; ?>"></br></br>
-			<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
-			<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
-			<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a></div>
-			<div style="padding-left:50px">
-			<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
-			</div>
-			<?php if($update == "1") {
-				echo "<div class='alert alert-info' style='color:white;padding-left:50px'>Settings File Updated.</div>";
-			} ?>
-			</form>
-			</div>
-			<div class="dripdrop" style="color:white;padding-left:10px"></br>
-			<a class="dripdrop-title">Plex Server Data</a></br></br>
-			<a class="dripdrop-header">IP Address:</a></br>
-			<a><?php echo $plexServer; ?></a></br></br>
-			<a class="dripdrop-header">Web Port:</a></br>
-			<a><?php echo $plexport; ?></a></br></br>
-			<a class="dripdrop-header">Web Token:</a></br>
-			<a><?php echo $plexToken; ?></a></br></br>
-			<?php echo $clientinfodump; ?>
+			<div class="container" style="position:absolute;top:60px" scrolling="no">
+				<h3 style="color:white" class="gn-icon gn-icon-cog">Settings</h3>
+					<div class="container" name="schedulearea" type="text/html";>
+						<form method="post">
+							<div class="container" name="schedulearea" type="text/html";>
+								<label style="padding-left:10px;padding-right:5px;color:white">Pseudo Channel Directory: </label></br>&nbsp;&nbsp;&nbsp;
+								<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannelMaster"; ?>"></br></br>
+								<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
+								<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
+								<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a>
+							</div>
+							
+							<div style="padding-left:50px">
+								<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
+							</div>
+							<?php if($update == "1") {
+								echo "<div class='alert alert-info' style='color:white;padding-left:50px'>Settings File Updated.</div>";
+							} ?>
+						</form>
+					</div>
+				<div class="dripdrop" style="color:white;padding-left:10px"></br>
+				<a class="dripdrop-title">Plex Server Data</a></br></br>
+				<a class="dripdrop-header">IP Address:</a></br>
+				<a><?php echo $plexServer; ?></a></br></br>
+				<a class="dripdrop-header">Web Port:</a></br>
+				<a><?php echo $plexport; ?></a></br></br>
+				<a class="dripdrop-header">Web Token:</a></br>
+				<a><?php echo $plexToken; ?></a></br></br>
+				<?php echo $clientinfodump; ?>
+				<div style="padding-left:50px">
+					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">Purge Favicon Cache</a>
+				</div>
 			</div>
 			<ul id="gn-menu" class="gn-menu-main">
 				<li class="gn-trigger">

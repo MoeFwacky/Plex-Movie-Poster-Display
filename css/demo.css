@@ -272,10 +272,11 @@ table {
 	text-align: center;
 }
 
-table.schedule-table, td:hover{
+table tr:hover td {
 	background-color:gray;
         vertical-align:middle;
 }
+
 
 .schedule-table, th {
 	font-size:1.2em;
