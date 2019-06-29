@@ -9,7 +9,7 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
 }
 	$channel_number = $_GET["num"];
 	ob_start();
-	echo exec("cd " . "$ps" . " && sudo -u pi /bin/bash manual.sh " . "$channel_number");
+	echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash manual.sh " . "$channel_number");
 	ob_end_clean();
 }
 function stopAllChannels() {
@@ -21,7 +21,7 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-	echo exec("cd " . "$ps" . " && sudo -u pi /bin/bash stop-all-channels.sh");
+	echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash stop-all-channels.sh");
 	ob_end_clean();
 }
 function channel_down() {
@@ -33,7 +33,7 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-        echo exec("cd " . "$ps" . " && sudo -u pi /bin/bash channeldown.sh");
+        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channeldown.sh");
 	ob_end_clean();
 }
 function channel_up() {
@@ -45,14 +45,14 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-        echo exec("cd " . "$ps" . " && sudo -u pi /bin/bash channelup.sh");
+        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channelup.sh");
 	ob_end_clean();
 }
 function databaseUpdate() {
 include('config.php');
 $ps = "$pseudochannelMaster";
 	ob_start();
-	echo exec("cd " . "$ps" . " && sudo -u pi /bin/bash globalupdate.sh");
+	echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash globalupdate.sh");
 	echo exec("/bin/bash updatexml.sh");
 	ob_end_clean();
 }
