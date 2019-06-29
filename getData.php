@@ -193,23 +193,40 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
 			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
 			$ch_number = str_replace("ch", "", $ch_file);
-			$favicon_local_path = './favicons/favicon_'.$ch_number.'.png';
+			//$favicon_local_path = './favicons/favicon_'.$ch_number.'.png';
+			$favicon_local_path = glob('./favicons/favicon_'.$ch_number.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
+			$favicon_pseudo_path = glob($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon*'.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
 			$favicon_img_tag = "";
+			//error_log("favicon_local_path", 0);
+			//error_log(print_r($favicon_local_path, TRUE)); 
 			if (!file_exists('./favicons')) {
 			    mkdir('./favicons', 0777, true);
 			}
-			if(!file_exists($favicon_local_path)){
-				if(file_exists($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon.png')){
-					copy($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon.png', $favicon_local_path);
-					
+
+			if(count($favicon_local_path) > 0){
+				if(!file_exists($favicon_local_path[0])){
+					if(file_exists($favicon_pseudo_path[0])){
+						copy($favicon_pseudo_path[0], $favicon_local_path[0]);
+					}
+				}
+			} else {
+
+				if (count($favicon_pseudo_path) > 0){ 
+					if(file_exists($favicon_pseudo_path[0])){
+						copy($favicon_pseudo_path[0], './favicons/favicon_'.$ch_number.'.'.pathinfo($favicon_pseudo_path[0])['extension']);
+					}
+				}
+
+			}
+			
+			if (count($favicon_local_path) > 0){
+				if(file_exists($favicon_local_path[0])){
+					$favicon_img_tag = "<img class='schedule-channel-favicon' src='$favicon_local_path[0]'>";
+				}else{
+					$favicon_img_tag = "";
 				}
 			}
-
-			if(file_exists($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon.png')){
-				$favicon_img_tag = "<img class='schedule-channel-favicon' src='$favicon_local_path'>";
-			}else{
-				$favicon_img_tag = "";
-			}
+			
 
 			if ($doheader != "1") {
 				$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
@@ -238,27 +255,34 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$nowtable .= $attributes['title'] . "</a></td>";
 				}
 			}
-			if (isset($results[$ch_file]) || $results[$ch_file] == "") {
+
+			try {
 				if ($results[$ch_file] == "") {
 					$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
 				}
-			}
+		        
+		    } catch (Exception $e) {
+		        error_log(print_r($e, TRUE)); 
+		    }
+
 			if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
 				$isnowplaying = "color:#f4ff96";
 			} else {
 				$isnowplaying = "";
 			}
 			if ($attributes['type'] != "Commercials") {
-				$results[$ch_file] .= "<tr>";
-				$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-				$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
-				if ($attributes['type'] == "TV Shows") {
-					$results[$ch_file] .= $attributes['show-title'];
-					$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-				} elseif ($attributes['type'] == "Commercials") {
-					$results[$ch_file] .= $attributes['type'] . "</td>";
-				} else {
-					$results[$ch_file] .= $attributes['title'] . "</td>";
+				if (isset($results[$ch_file])) {
+					$results[$ch_file] .= "<tr>";
+					$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+					$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
+					if ($attributes['type'] == "TV Shows") {
+						$results[$ch_file] .= $attributes['show-title'];
+						$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
+					} elseif ($attributes['type'] == "Commercials") {
+						$results[$ch_file] .= $attributes['type'] . "</td>";
+					} else {
+						$results[$ch_file] .= $attributes['title'] . "</td>";
+					}
 				}
 			}
 		}
