@@ -222,6 +222,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			} else {
 				$channelplaying = "";
 			}
+			$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
 			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
 				$nowtable .= "<tr><td class='$channelPlayingRowClass'><span class='favicon-container'><a style='$channelplaying' href='schedule.php?" . $urlstring . "ch=$ch_number'>$favicon_img_tag<span class='ch_number'>" . $ch_number_for_html . "</span></a></span></td>";
 				$nowtable .= "<td style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
