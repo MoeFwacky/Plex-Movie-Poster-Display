@@ -308,6 +308,8 @@ table tr:hover td {
 
 .main-container {
 	margin-top: 80px;
+    max-width: 600px;
+    margin: 80px auto;
 }
 
 .gn-menu-main > li {

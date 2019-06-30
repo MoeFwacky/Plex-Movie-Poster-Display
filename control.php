@@ -48,6 +48,24 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channelup.sh");
 	ob_end_clean();
 }
+function update_web() {
+include('config.php');
+if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
+        $ps = "$pseudochannelMaster";
+} else {
+	$pseudochannel = substr($pseudochannel, 0, -1);
+        $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
+}
+	ob_start();
+        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash updateweb.sh");
+	ob_end_clean();
+}
+function purge_favicon_cache() {
+	echo "sadkjfklsjdlkfjlsdjfljsdlf";
+	ob_start();
+        echo exec("sudo rm -rf ./logos");
+	ob_end_clean();
+}
 function databaseUpdate() {
 include('config.php');
 $ps = "$pseudochannelMaster";
@@ -72,6 +90,12 @@ if(isset($_GET['action'])){
 		break;
 		case 'update':
 			databaseUpdate();
+		break;
+		case 'updateweb':
+			update_web();
+		break;
+		case 'purgefaviconcache':
+			purge_favicon_cache();
 		break;
 	}
 }

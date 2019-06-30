@@ -129,7 +129,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$middle_section = $top_line . $clients['librarySectionTitle'] . "</p>";
 					$bottom_section = "<p></p>";
 					$title_clean = str_replace("_", " ", $clients['title']);
-					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $title_clean . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: <span style='color:red;'>" . $title_clean . "</span> on Channel ". $channel_num . "</a>";
 				}
 				//IF PLAYING MOVIE
 				if($clients['type'] == "movie" && $clients['duration'] >= 1800000) {
@@ -149,7 +149,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$top_section = $background_art . $time_style . $date . $side_channel . "</p>" . $position;
 					$middle_section = $top_line . $clients['title'] . $middle_line . $clients['year'] . "</p>";
 					$bottom_section = $bottom_line . $clients['tagline'] . "</p>";
-					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $clients['title'] . " (" . $clients['year'] . ")" . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: <span style='color:red;'>" . $clients['title'] . " (" . $clients['year'] . ")" . "</span> on Channel ". $channel_num . "</a>";
 				}
 				//IF PLAYING TV SHOW
 				if($clients['type'] == "show" || $clients['parentTitle'] != "") {
@@ -168,7 +168,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$top_section =  $background_art . $time_style . $date . "</p>" . $position;
 					$middle_section = $top_line . $clients['grandparentTitle'] . "</p>" . $middle_line . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
 					$bottom_section = $bottom_line . $clients['title'] . "</p>" . $side_channel . "</p>";
-					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $clients['grandparentTitle'] . " • " . $clients['parentTitle'] . ", Episode " . $clients['index'] . " • " . $clients['title'] . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing:  <span style='color:red;'>" . $clients['grandparentTitle'] . " • " . $clients['parentTitle'] . ", Episode " . $clients['index'] . " • " . $clients['title'] . "</span> on Channel ". $channel_num . "</a>";
 					}
 				}
 		  }
@@ -236,9 +236,11 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			if ($chnum == $ch_number) {
 				$channelplaying = "color:#f4ff96";
 				$channelPlayingRowClass = "now-playing-highlight-me";
+				$channelplayingTitleStyle = "color:#f4ff96";
 			} else {
 				$channelplaying = "";
 				$channelPlayingRowClass = "";
+				$channelplayingTitleStyle = "";
 			}
 			$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
 			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
@@ -246,13 +248,17 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 				$nowtable .= "<td class='$channelPlayingRowClass' style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
 				$nowtable .= "<td class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
 				if ($attributes['type'] == "TV Shows") {
+					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
 					$nowtable .= $attributes['show-title'];
 					$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
 				} elseif ($attributes['type'] == "Commercials") {
+					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
 					$nowtable .= $attributes['type'] . "</td>";
 				} else {
+					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
 					$nowtable .= $attributes['title'] . "</a></td>";
 				}
+				$nowtable .= "</span>";
 			}
 
 			try {
