@@ -193,14 +193,13 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
 			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
 			$ch_number = str_replace("ch", "", $ch_file);
-			//$favicon_local_path = './favicons/favicon_'.$ch_number.'.png';
-			$favicon_local_path = glob('./favicons/favicon_'.$ch_number.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
+			$favicon_local_path = glob('./logos/channel-logo_'.$ch_number.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
 			$favicon_pseudo_path = glob($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon*'.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
 			$favicon_img_tag = "";
 			//error_log("favicon_local_path", 0);
 			//error_log(print_r($favicon_local_path, TRUE)); 
-			if (!file_exists('./favicons')) {
-			    mkdir('./favicons', 0777, true);
+			if (!file_exists('./logos')) {
+			    mkdir('./logos', 0777, true);
 			}
 
 			if(count($favicon_local_path) > 0){
@@ -213,7 +212,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 
 				if (count($favicon_pseudo_path) > 0){ 
 					if(file_exists($favicon_pseudo_path[0])){
-						copy($favicon_pseudo_path[0], './favicons/favicon_'.$ch_number.'.'.pathinfo($favicon_pseudo_path[0])['extension']);
+						copy($favicon_pseudo_path[0], './logos/channel-logo_'.$ch_number.'.'.pathinfo($favicon_pseudo_path[0])['extension']);
 					}
 				}
 

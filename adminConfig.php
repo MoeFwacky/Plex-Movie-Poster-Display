@@ -134,7 +134,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 				<a><?php echo $plexToken; ?></a></br></br>
 				<?php echo $clientinfodump; ?>
 				<div style="">
-					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">&#8594; Purge Favicon Cache</a>
+					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">&#8594; Purge Logo Image Cache</a>
 				</div>
 			</div>
 			<ul id="gn-menu" class="gn-menu-main">
