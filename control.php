@@ -9,7 +9,10 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
 }
 	$channel_number = $_GET["num"];
 	ob_start();
-	echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash manual.sh " . "$channel_number");
+	echo exec("ps aux | grep '[m]anual.sh'", $o);
+	if(count($o) <= 0){
+		echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash manual.sh " . "$channel_number > /dev/null 2>/dev/null &");
+	}
 	ob_end_clean();
 }
 function stopAllChannels() {
@@ -21,7 +24,10 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-	echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash stop-all-channels.sh");
+	echo exec("ps aux | grep '[s]top-all-channels.sh'", $o);
+	if(count($o) <= 0){
+		echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash stop-all-channels.sh > /dev/null 2>/dev/null &");
+	}
 	ob_end_clean();
 }
 function channel_down() {
@@ -33,7 +39,10 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channeldown.sh");
+	echo exec("ps aux | grep '[c]hanneldown.sh'", $o);
+	if(count($o) <= 0){
+        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channeldown.sh > /dev/null 2>/dev/null &");
+    }
 	ob_end_clean();
 }
 function channel_up() {
@@ -45,7 +54,10 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channelup.sh");
+	echo exec("ps aux | grep '[c]hannelup.sh'", $o);
+	if(count($o) <= 0){
+        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash channelup.sh > /dev/null 2>/dev/null &");
+    }
 	ob_end_clean();
 }
 function update_web() {
@@ -79,9 +91,9 @@ $ps = "$pseudochannelMaster";
 }
 if(isset($_GET['action'])){
 	switch($_GET['action']) {
-	        case 'stop':
-	                stopAllChannels();
-	        break;
+        case 'stop':
+                stopAllChannels();
+        break;
 		case 'channel':
 			Channel();
 		break;
