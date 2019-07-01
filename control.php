@@ -57,11 +57,14 @@ if(empty($_GET["tv"]) || $_GET["tv"] == $configClientName) {
         $ps = "$pseudochannelTrim" . "_" . $_GET["tv"];
 }
 	ob_start();
-        echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash updateweb.sh");
+    echo exec("ps aux | grep '[u]pdateweb.sh'", $o);
+    //error_log(print_r(count($o), TRUE)); 
+    if(count($o) <= 0){
+    	echo exec("cd " . "$ps" . " && sudo -u $user /bin/bash updateweb.sh > /dev/null 2>/dev/null &");
+    }
 	ob_end_clean();
 }
 function purge_favicon_cache() {
-	echo "sadkjfklsjdlkfjlsdjfljsdlf";
 	ob_start();
         echo exec("sudo rm -rf ./logos");
 	ob_end_clean();
