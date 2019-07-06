@@ -51,7 +51,7 @@ if ($DisplayType == 'half') {
 	$bottom_line = "<p class='vcr-info-half-3'>";
 	$side_channel = "<p class='vcr-side-half'>Channel $channel_num</p>";
 
-	$position_half = "<img position: absolute; align: top; width='480' style='opacity:1;'>";
+	$position_half = "<img width='100%' style='opacity:1;position: absolute; align: top; '>";
 }
 
 if ($DisplayType == 'full') {
@@ -77,14 +77,14 @@ if ($DisplayType == 'full') {
 		  }
 
 # SET FULL OPTIONS
-	$time_style = "<p class='vcr-time-full-idle' style='color: $text_color'>";
-	$top_line = "<p class='vcr-info-full-1-idle' style=color: $text_color'>";
-	$middle_line = "<p class='vcr-info-full-2-idle' style=color: $text_color_alt'>";
-	$bottom_line = "<p class='vcr-info-full-3-idle' style=color: $text_color'>";
-	$side_channel = "<p class='vcr-side-full' style='color: $text_color_alt'>Channel $channel_num</p>";
+	$time_style = "<p class='vcr-time-full-idle' style='color: $text_color;top:60px;'>";
+	$top_line = "<p class='vcr-info-full-1-idle' style='color: $text_color; font-size:85px;top:240px;'>";
+	$middle_line = "<p class='vcr-info-full-2-idle' style='color:cyan; font-size:55px;top:310px;'>";
+	$bottom_line = "<p class='vcr-info-full-3-idle' style='color: cyan; font-size:65px;top:390px;'>";
+	$side_channel = "<p class='vcr-side-full' style='color: cyan;font-size:75px;top:5px;'>Channel $channel_num</p>";
 
-	$position_play_full = "<img position: absolute; top: 20px; width='480' style='opacity:1;'>";
-	$position_idle_full = "<img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
+	$position_play_full = "<img position: absolute; top: 0; width='100%' style='opacity:1;'>";
+	$position_idle_full = "<img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='100%' style='opacity:1;'>";
 }
 
 if(strcmp($channel_num," ")<=0){
@@ -137,12 +137,12 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$text_color_alt='white';
 			        if ($DisplayType == 'half') {
 						$art = $clients['thumb'];
-						$background_art	= "<img position: fixed; margin-top: 10; top: 10px; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130';'>";
+						$background_art	= "<img style='position: absolute; align: left; left: 0;' src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130';'>";
 						$position=$position_half;
 					}
 					if ($DisplayType == 'full') {
 						$art = $clients['art'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='480';>";
+						$background_art	= "<div style='opacity:.5;width:100%;height:100%;position: absolute; align: left; left: 0;background:url(http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken);background-repeat:no-repeat;background-position: center center;background-size:cover;' src='' width='100%' ></div>";
 						$position=$position_play_full;
 					}
 
@@ -155,12 +155,12 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 				if($clients['type'] == "show" || $clients['parentTitle'] != "") {
 					if ($DisplayType == 'half') {
 						$art = $clients['parentThumb'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='130';>";
+						$background_art	= "<img style='position: absolute; align: left; left: 0;' src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130'>";
 						$position=$position_half;
 					}
 					if ($DisplayType == 'full') {
 						$art = $clients['grandparentArt'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='480';>";
+						$background_art	= "<div style='opacity:.5;width:100%;height:100%;position: absolute; align: left; left: 0;background:url(http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken);background-repeat:no-repeat;background-position: center center;background-size:cover;' src='' width='100%' ></div>";
 						$position=$position_play_full;
 						$text_color='yellow';
 						$text_color_alt='white';
