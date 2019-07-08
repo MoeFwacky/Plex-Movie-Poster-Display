@@ -14,7 +14,7 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
 ## Prerequisites
  - A functioning Plex Server
  - Web Server – I am running Apache, but nginx or whatever else you prefer will work just fine.
- - PHP – I am running version  5.6.30
+ - PHP – I am running version  7
  - Other elements to read xml strings. For exact dependencies, see the install_dependencies.sh file.
  - Your X-Plex-Token. https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
 
@@ -23,6 +23,7 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
 - Shows Media title text and other information
 - Displays Pseudo Channel status information and commercial library names
 - Web Frontend for configuration
+- Channel Icons
 
 ## Installation
 - Install apache2
@@ -72,3 +73,10 @@ www-data ALL=(ALL) NOPASSWD: ALL
 ```bash
 % sudo chmod -R 777 /var/www/html
 ```
+
+## Channel Icons
+
+![FakeTV Web Interface](https://i.imgur.com/nhg16Pd.png "FakeTV Web Interface")
+
+- Just add a icon/logo img file to your `pseudo-channel_##` dir named, `favicon.png` (possible filetypes: `jpg,png,gif,ico,svg`). The file must be named, `favicon` and there must only be one of these files in the directory. If you update/change the image you must delete the `./logos` directory that is created in the web directory (i.e. `/var/www/html/logos`). You can do this manually or you can navigate to `settings` in the web interface, scroll to the bottom and click `Purge Logo Image Cache`. 
+
