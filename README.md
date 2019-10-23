@@ -48,6 +48,7 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
 % sudo chmod +x ./install_dependencies.sh
 % sudo ./install_dependencies.sh
 ```
+...you may have to install some packages manually depending on your PHP version, Raspian version, etc. You will need the "php-xml" package for your PHP version. To find it, run `apt-cache search --names-only ^php7 | grep -i xml` to see what is available to your setup. Install the correct version from the list.
 
 - Navigate your browser to your Pi's IP
 ```bash
