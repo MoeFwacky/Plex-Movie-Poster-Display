@@ -4,6 +4,7 @@
 include('./control.php');
 include('./config.php');
 $tvlocations = glob($pseudochannelTrim . "*", GLOB_ONLYDIR);
+$boxes = '';
 foreach ($tvlocations as $tvbox) {
 	if ($tvbox . "/"  == $pseudochannelMaster) {
 		$boxname = $configClientName;
@@ -19,7 +20,7 @@ foreach ($tvlocations as $tvbox) {
 		<style type="text/css">a {text-decoration: none}</style>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0;">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>FakeTV Guide and Control</title>
 		<meta name="description" content="A page that works with Pseudo Channel and Plex to display now playing data and allow viewing and navigation of Pseudo Channel schedules" />
 		<link rel="shortcut icon" href="../favicon.ico">
@@ -35,6 +36,9 @@ foreach ($tvlocations as $tvbox) {
 		<meta name="msapplication-TileColor" content="#2b5797">
 		<meta name="msapplication-config" content="assets/browserconfig.xml">
 		<meta name="theme-color" content="#ffffff">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="js/classie.js"></script>
+		<script src="js/gnmenu.js"></script>
 		<script src="js/modernizr.custom.js"></script>
 		<script>
 		var query = window.location.search.substring(1)
@@ -76,7 +80,7 @@ foreach ($tvlocations as $tvbox) {
 		</script>
 	</head>
 	<body>
-		<p style="top:100px"><?php echo $plexClientName; ?></p>
+		
 		<?php
 		session_start();
 		if (isset($_GET['ch'])) {
@@ -93,9 +97,10 @@ foreach ($tvlocations as $tvbox) {
 		}
 		session_write_close();
 		?>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-		<div id="container">
-			<div class="container" style="position:absolute;top:60px" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By<? php echo $plexClientName; ?></p>
+		<div class="container main-container">
+			<a href="schedule.php?action=updateweb&<?php echo $urlstring; ?>" style="color:white" href="">Update Web XML's for Each Channel &#8594;</a>
+			<p style="color:white"><?php echo $plexClientName; ?></p>
+			<div class="container" style="" scrolling="no"><p style="color:white" id="nowplaying" class="container">Please Stand By<? php echo $plexClientName; ?></p>
 			<div id="<?php echo $id; ?>" class="container" name="schedulearea" type="text/html";></div>
 			<ul id="gn-menu" class="gn-menu-main">
 				<li class="gn-trigger">
@@ -115,9 +120,9 @@ foreach ($tvlocations as $tvbox) {
 				<li><a class="codrops-icon" href="schedule.php?action=stop&<?php echo $urlstring; ?>">Stop</a></li>
 				<li></li>
 			</ul>
+			
 		</div><!-- /container -->
-		<script src="js/classie.js"></script>
-		<script src="js/gnmenu.js"></script>
+		
 		<script>
 			new gnMenu( document.getElementById( 'gn-menu' ) );
 		</script>

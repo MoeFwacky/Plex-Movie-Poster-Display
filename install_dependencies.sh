@@ -7,6 +7,6 @@
 # - libapache2-mod-php
 #
 # Then apache2 is reset to be careful
-
-sudo apt-get install php apache2 libapache2-mod-php php7.0-xml
+sudo apt-get update
+sudo apt-get install php apache2 libapache2-mod-php php-xml
 sudo service apache2 restart

@@ -202,6 +202,16 @@ body {
 	color:'white';
 }
 
+th {
+    padding: 5px 10px;
+    font-weight: normal!important;
+    border:1px solid white; 
+}
+
+table {
+    border: none!important;
+}
+
 .indexpage {
 	color: 'white';
 	font-family: 'overpass-regular';
@@ -262,10 +272,11 @@ body {
 	text-align: center;
 }
 
-table.schedule-table, td:hover{
+table tr:hover td {
 	background-color:gray;
         vertical-align:middle;
 }
+
 
 .schedule-table, th {
 	font-size:1.2em;
@@ -273,10 +284,37 @@ table.schedule-table, td:hover{
 	background-color:#34495e;
 }
 
+.favicon-container {
+	margin:8px 0 0 0;
+    display: flex;
+  	flex-direction: column;
+  	justify-content: center;
+}
+
+.schedule-table .schedule-channel-favicon {
+	max-height: 50px;
+	width: auto;
+}
+
 .schedule-table a:hover {
-	text-shadow:1px 1 1 currentColor;
-	font-family:"overpass-heavy";
-        color:white;
+	color:#f4ff96!important;
+	font-family:"overpass-regular";
+}
+
+.schedule-table .now-playing-highlight-me {
+    background-color: #333;
+    color: #f4ff96!important;
+}
+
+.main-container {
+	margin-top: 80px;
+    max-width: 600px;
+    margin: 80px auto;
+}
+
+.gn-menu-main > li {
+
+    background: white;
 }
 
 .schedule-table a:link { 
@@ -414,6 +452,80 @@ table.schedule-table, td:hover{
 		display: none;
 	}
 
+	
+
+}
+
+/* 
+  ##Device = Desktops
+  ##Screen = 1281px to higher resolution desktops
+*/
+
+@media (min-width: 1281px) {
+  
+  
+  
+}
+
+/* 
+  ##Device = Laptops, Desktops
+  ##Screen = B/w 1025px to 1280px
+*/
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  
+  
+  
+}
+
+/* 
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  
+  
+  
+}
+
+/* 
+  ##Device = Tablets, Ipads (landscape)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  
+  
+  
+}
+
+/* 
+  ##Device = Low Resolution Tablets, Mobiles (Landscape)
+  ##Screen = B/w 481px to 767px
+*/
+
+@media (min-width: 481px) and (max-width: 767px) {
+  
+  
+  
+}
+
+/* 
+  ##Device = Most of the Smartphones Mobiles (Portrait)
+  ##Screen = B/w 320px to 479px
+*/
+
+@media (min-width: 320px) and (max-width: 480px) {
+  
+  	.main-container {
+		margin-top: 100px;
+	}
+
+	.schedule-channel-favicon {
+	    max-width: 50px;
+	}
+  
 }
 .clear{ 
 clear:both;

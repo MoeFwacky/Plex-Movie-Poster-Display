@@ -51,7 +51,7 @@ if ($DisplayType == 'half') {
 	$bottom_line = "<p class='vcr-info-half-3'>";
 	$side_channel = "<p class='vcr-side-half'>Channel $channel_num</p>";
 
-	$position_half = "<img position: absolute; align: top; width='480' style='opacity:1;'>";
+	$position_half = "<img width='100%' style='opacity:1;position: absolute; align: top; '>";
 }
 
 if ($DisplayType == 'full') {
@@ -77,14 +77,14 @@ if ($DisplayType == 'full') {
 		  }
 
 # SET FULL OPTIONS
-	$time_style = "<p class='vcr-time-full-idle' style='color: $text_color'>";
-	$top_line = "<p class='vcr-info-full-1-idle' style=color: $text_color'>";
-	$middle_line = "<p class='vcr-info-full-2-idle' style=color: $text_color_alt'>";
-	$bottom_line = "<p class='vcr-info-full-3-idle' style=color: $text_color'>";
-	$side_channel = "<p class='vcr-side-full' style='color: $text_color_alt'>Channel $channel_num</p>";
+	$time_style = "<p class='vcr-time-full-idle' style='color: $text_color;top:60px;'>";
+	$top_line = "<p class='vcr-info-full-1-idle' style='color: $text_color; font-size:85px;top:240px;'>";
+	$middle_line = "<p class='vcr-info-full-2-idle' style='color:cyan; font-size:55px;top:310px;'>";
+	$bottom_line = "<p class='vcr-info-full-3-idle' style='color: cyan; font-size:65px;top:390px;'>";
+	$side_channel = "<p class='vcr-side-full' style='color: cyan;font-size:75px;top:5px;'>Channel $channel_num</p>";
 
-	$position_play_full = "<img position: absolute; top: 20px; width='480' style='opacity:1;'>";
-	$position_idle_full = "<img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='480' style='opacity:1;'>";
+	$position_play_full = "<img position: absolute; top: 0; width='100%' style='opacity:1;'>";
+	$position_idle_full = "<img position: absolute; top: 0; src='/assets/vcr-play.jpg' width='100%' style='opacity:1;'>";
 }
 
 if(strcmp($channel_num," ")<=0){
@@ -129,7 +129,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$middle_section = $top_line . $clients['librarySectionTitle'] . "</p>";
 					$bottom_section = "<p></p>";
 					$title_clean = str_replace("_", " ", $clients['title']);
-					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $title_clean . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: <span style='color:red;'>" . $title_clean . "</span> on Channel ". $channel_num . "</a>";
 				}
 				//IF PLAYING MOVIE
 				if($clients['type'] == "movie" && $clients['duration'] >= 1800000) {
@@ -137,30 +137,30 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$text_color_alt='white';
 			        if ($DisplayType == 'half') {
 						$art = $clients['thumb'];
-						$background_art	= "<img position: fixed; margin-top: 10; top: 10px; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130';'>";
+						$background_art	= "<img style='position: absolute; align: left; left: 0;' src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130';'>";
 						$position=$position_half;
 					}
 					if ($DisplayType == 'full') {
 						$art = $clients['art'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='480';>";
+						$background_art	= "<div style='opacity:.5;width:100%;height:100%;position: absolute; align: left; left: 0;background:url(http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken);background-repeat:no-repeat;background-position: center center;background-size:cover;' src='' width='100%' ></div>";
 						$position=$position_play_full;
 					}
 
 					$top_section = $background_art . $time_style . $date . $side_channel . "</p>" . $position;
 					$middle_section = $top_line . $clients['title'] . $middle_line . $clients['year'] . "</p>";
 					$bottom_section = $bottom_line . $clients['tagline'] . "</p>";
-					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $clients['title'] . " (" . $clients['year'] . ")" . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: <span style='color:red;'>" . $clients['title'] . " (" . $clients['year'] . ")" . "</span> on Channel ". $channel_num . "</a>";
 				}
 				//IF PLAYING TV SHOW
 				if($clients['type'] == "show" || $clients['parentTitle'] != "") {
 					if ($DisplayType == 'half') {
 						$art = $clients['parentThumb'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='130';>";
+						$background_art	= "<img style='position: absolute; align: left; left: 0;' src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken' width='130'>";
 						$position=$position_half;
 					}
 					if ($DisplayType == 'full') {
 						$art = $clients['grandparentArt'];
-						$background_art	= "<img position: fixed; align: left; left: -100; top: 10px; margin-top: 10; src='http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken'; width='480';>";
+						$background_art	= "<div style='opacity:.5;width:100%;height:100%;position: absolute; align: left; left: 0;background:url(http:\/\/$plexServer:$plexport$art?X-Plex-Token=$plexToken);background-repeat:no-repeat;background-position: center center;background-size:cover;' src='' width='100%' ></div>";
 						$position=$position_play_full;
 						$text_color='yellow';
 						$text_color_alt='white';
@@ -168,7 +168,7 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 					$top_section =  $background_art . $time_style . $date . "</p>" . $position;
 					$middle_section = $top_line . $clients['grandparentTitle'] . "</p>" . $middle_line . $clients['parentTitle'] . ", Episode " . $clients['index'] . "</p>";
 					$bottom_section = $bottom_line . $clients['title'] . "</p>" . $side_channel . "</p>";
-					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing: " . $clients['grandparentTitle'] . " • " . $clients['parentTitle'] . ", Episode " . $clients['index'] . " • " . $clients['title'] . " on Channel ". $channel_num . "</a>";
+					$nowplaying = "<a href='schedule.php?$urlstring' style='color:white'>Now Playing:  <span style='color:red;'>" . $clients['grandparentTitle'] . " • " . $clients['parentTitle'] . ", Episode " . $clients['index'] . " • " . $clients['title'] . "</span> on Channel ". $channel_num . "</a>";
 					}
 				}
 		  }
@@ -176,67 +176,127 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 
 //BUILD DAILY SCHEDULE PAGES
 $doheader = "0";
+$ch_file = "";
+$nowtable = "";
 foreach ($dircontents as $xmlfile) { //do the following for each xml schedule file
-	$xmldata = simplexml_load_file($xmlfile); //load the xml schedule file
-	foreach($xmldata->time as $attributes) { //for each entry in the schedule, do the following
-		$start_time_unix = strtotime($attributes['time-start']); //get the entry start time
-	    	$start_time_human = date("H:i", $start_time_unix); //convert start time to readable format
-		$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
-		$duration_seconds = $duration_seconds-1;
-		$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
-		$end_time_human = date("H:i", $end_time_unix); //end time in readable format
-		$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
-		$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
-		$ch_number = str_replace("ch", "", $ch_file);
-		if ($doheader != "1") {
-			$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
-			$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
-			$nowtable = $tableheader;
-			$doheader = "1";
-		}
-		if ($chnum == $ch_number) {
-			$channelplaying = "font-weight:bold;font-size:1.1em";
-		} else {
-			$channelplaying = "";
-		}
-		if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
-			$nowtable .= "<tr><td><a style='$channelplaying;display:block; width:100%' href='schedule.php?" . $urlstring . "ch=$ch_number'>" . $ch_number . "</a></td>";
-			$nowtable .= "<td style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-			$nowtable .= "<td style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
-			if ($attributes['type'] == "TV Shows") {
-				$nowtable .= $attributes['show-title'];
-				$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-			} elseif ($attributes['type'] == "Commercials") {
-				$nowtable .= $attributes['type'] . "</td>";
-			} else {
-				$nowtable .= $attributes['title'] . "</a></td>";
+	if($xmlfile){
+		$xmldata = simplexml_load_file($xmlfile); //load the xml schedule file
+	}
+	if($xmldata){
+		foreach($xmldata->time as $attributes) { //for each entry in the schedule, do the following
+			$start_time_unix = strtotime($attributes['time-start']); //get the entry start time
+		    	$start_time_human = date("H:i", $start_time_unix); //convert start time to readable format
+			$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
+			$duration_seconds = $duration_seconds-1;
+			$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
+			$end_time_human = date("H:i", $end_time_unix); //end time in readable format
+			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
+			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
+			$ch_number = str_replace("ch", "", $ch_file);
+			$favicon_local_path = glob('./logos/channel-logo_'.$ch_number.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
+			$favicon_pseudo_path = glob($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon*'.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
+			$favicon_img_tag = "";
+			//error_log("favicon_local_path", 0);
+			//error_log(print_r($favicon_local_path, TRUE)); 
+			if (!file_exists('./logos')) {
+			    mkdir('./logos', 0777, true);
 			}
-		}
-		if ($results[$ch_file] == "") {
-			$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
-		}
-		if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
-			$isnowplaying = "font-weight:bold;font-size:1.2em";
-		} else {
-			$isnowplaying = "";
-		}
-		if ($attributes['type'] != "Commercials") {
-			$results[$ch_file] .= "<tr>";
-			$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-			$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
-			if ($attributes['type'] == "TV Shows") {
-				$results[$ch_file] .= $attributes['show-title'];
-				$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-			} elseif ($attributes['type'] == "Commercials") {
-				$results[$ch_file] .= $attributes['type'] . "</td>";
+
+			if(count($favicon_local_path) > 0){
+				if(!file_exists($favicon_local_path[0])){
+					if(file_exists($favicon_pseudo_path[0])){
+						copy($favicon_pseudo_path[0], $favicon_local_path[0]);
+					}
+				}
 			} else {
-				$results[$ch_file] .= $attributes['title'] . "</td>";
+
+				if (count($favicon_pseudo_path) > 0){ 
+					if(file_exists($favicon_pseudo_path[0])){
+						copy($favicon_pseudo_path[0], './logos/channel-logo_'.$ch_number.'.'.pathinfo($favicon_pseudo_path[0])['extension']);
+					}
+				}
+
+			}
+			
+			if (count($favicon_local_path) > 0){
+				if(file_exists($favicon_local_path[0])){
+					$favicon_img_tag = "<img class='schedule-channel-favicon' src='$favicon_local_path[0]'>";
+				}else{
+					$favicon_img_tag = "";
+				}
+			}
+			
+
+			if ($doheader != "1") {
+				$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
+				$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
+				$nowtable = $tableheader;
+				$doheader = "1";
+			}
+			if ($chnum == $ch_number) {
+				$channelplaying = "color:#f4ff96";
+				$channelPlayingRowClass = "now-playing-highlight-me";
+				$channelplayingTitleStyle = "color:#f4ff96";
+			} else {
+				$channelplaying = "";
+				$channelPlayingRowClass = "";
+				$channelplayingTitleStyle = "";
+			}
+			$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
+			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
+				$nowtable .= "<tr><td class='$channelPlayingRowClass'><span class='favicon-container'><a style='$channelplaying' href='schedule.php?" . $urlstring . "ch=$ch_number'>$favicon_img_tag<span class='ch_number'>" . $ch_number_for_html . "</span></a></span></td>";
+				$nowtable .= "<td class='$channelPlayingRowClass' style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+				$nowtable .= "<td class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
+				if ($attributes['type'] == "TV Shows") {
+					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
+					$nowtable .= $attributes['show-title'];
+					$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
+				} elseif ($attributes['type'] == "Commercials") {
+					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
+					$nowtable .= $attributes['type'] . "</td>";
+				} else {
+					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
+					$nowtable .= $attributes['title'] . "</a></td>";
+				}
+				$nowtable .= "</span>";
+			}
+
+			try {
+				if (!isset($results[$ch_file]) || $results[$ch_file] == "") {
+					$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
+				}
+		        
+		    } catch (Exception $e) {
+		        error_log(print_r($e, TRUE)); 
+		    }
+
+			if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
+				$isnowplaying = "color:#f4ff96";
+			} else {
+				$isnowplaying = "";
+			}
+			if ($attributes['type'] != "Commercials") {
+				if (isset($results[$ch_file])) {
+					$results[$ch_file] .= "<tr>";
+					$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
+					$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
+					if ($attributes['type'] == "TV Shows") {
+						$results[$ch_file] .= $attributes['show-title'];
+						$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
+					} elseif ($attributes['type'] == "Commercials") {
+						$results[$ch_file] .= $attributes['type'] . "</td>";
+					} else {
+						$results[$ch_file] .= $attributes['title'] . "</td>";
+					}
+				}
 			}
 		}
 	}
 }
 $nowtable .= "</table>";
-$results[$ch_file] .= "</table>";
+if (isset($results[$ch_file])) {
+	$results[$ch_file] .= "</table>";
+}
 $results['rightnow'] = $nowtable;
 $results['top'] = "$top_section";
 $results['middle'] = "$middle_section $bottom_section";
