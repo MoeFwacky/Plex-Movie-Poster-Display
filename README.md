@@ -14,7 +14,7 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
 ## Prerequisites
  - A functioning Plex Server
  - Web Server – I am running Apache, but nginx or whatever else you prefer will work just fine.
- - PHP – I am running version  5.6.30
+ - PHP – I am running version  7
  - Other elements to read xml strings. For exact dependencies, see the install_dependencies.sh file.
  - Your X-Plex-Token. https://support.plex.tv/hc/en-us/articles/204059436-Finding-your-account-token-X-Plex-Token
 
@@ -23,18 +23,61 @@ Plex Now Playing Display is running 2 instances on separate Raspberry Pi 2 conne
 - Shows Media title text and other information
 - Displays Pseudo Channel status information and commercial library names
 - Web Frontend for configuration
+- Channel Icons
 
 ## Installation
-- If you don't have apache installed already, do that first (sudo apt-get install apache2)
-- Copy all the files into the root of your web server, or desired subfolder if running multiple instances (one copy per instance).
-- Change permissions on certain files.
--- Edit permissions of html folder (sudo chmod -R 777 /var/www/html)
--- Edit permissions of main channel folders (sudo chmod -R 777 <Home Directory Goes here>/channels(_NAME if necessary)
-- Add www-data as a sudo user, so they can run certain controls
--- Add the line "www-data ALL=(ALL) NOPASSWD: ALL" to the file /etc/sudoers (This can be done with an editing program like nano and sudo permissions)
-- Run the dependencies file to ensure everything is up to date (sudo /var/www/html/install_dependencies.sh)
-- Test that the output works
--- Open the URL to your server in a browser and configure. http://SERVER_IP_ADDRESS/adminConfig.php or http://SERVER_IP_ADDRESS/path/adminConfig.php
+- Install apache2
+```bash
+% sudo apt install apache2
+```
 
-## Upgrading
-- Check permissions on cache and config.php.
+- Change dirs to the new web folder / remove the default index.html / clone this repo there (or a subdir if desired)
+```bash
+% cd /var/www/html
+% sudo rm index.html
+% sudo git clone https://github.com/FakeTV/Web-Interface-for-Pseudo-Channel.git .
+```
+
+- Since we're in the `permissions` branch, checkout that branch in your new clone:
+```bash
+% sudo git checkout permissions
+```
+
+- Make `./install_dependencies.sh` file executable / install the dependencies
+```bash
+% sudo chmod +x ./install_dependencies.sh
+% sudo ./install_dependencies.sh
+```
+...you may have to install some packages manually depending on your PHP version, Raspian version, etc. You will need the "php-xml" package for your PHP version. To find it, run `apt-cache search --names-only ^php7 | grep -i xml` to see what is available to your setup. Install the correct version from the list.
+
+- Navigate your browser to your Pi's IP
+```bash
+http://SERVER_IP_ADDRESS/adminConfig.php 
+#or 
+http://SERVER_IP_ADDRESS/path/adminConfig.php
+```
+
+- Add www-data as a sudo user, so they can run certain controls
+```bash
+% sudo vim /etc/sudoers 
+
+# or:
+
+% sudo nano /etc/sudoers 
+```
+...add this line to the end of the file:
+```bash
+www-data ALL=(ALL) NOPASSWD: ALL
+```
+
+- Finally, change the permissions for the `html` dir (you can probably get away with only doing this to just `psConfig.php`):
+```bash
+% sudo chmod -R 777 /var/www/html
+```
+
+## Channel Icons
+
+![FakeTV Web Interface](https://i.imgur.com/nhg16Pd.png "FakeTV Web Interface")
+
+- Just add a icon/logo img file to your `pseudo-channel_##` dir named, `favicon.png` (possible filetypes: `jpg,png,gif,ico,svg`). The file must be named, `favicon` and there must only be one of these files in the directory. If you update/change the image you must delete the `./logos` directory that is created in the web directory (i.e. `/var/www/html/logos`). You can do this manually or you can navigate to `settings` in the web interface, scroll to the bottom and click `Purge Logo Image Cache`. 
+

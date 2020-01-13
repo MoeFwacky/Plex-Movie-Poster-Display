@@ -34,6 +34,17 @@ $pseudochannelMaster = $pseudochannel;
 $pseudochannelMaster = trim($pseudochannelMaster);
 $pseudochannelTrim = rtrim($pseudochannel,'/');
 $plexClientName = $configClientName;
+$user = "pi";
+$user = $pseudochannel;
+$user = strstr($user, "/home/"); //gets all text from needle on
+$user = strstr($user, "/channels", true); //gets all text before needle
+$userpatharr = explode('/home/', $user);
+if(count($userpatharr) > 1){
+	$user = $userpatharr[1];
+}else {
+	$user = 'pi';
+}
+
 if (isset($_SESSION['tv'])) {
 	$plexClientName = $_SESSION['tv'];
 	$urlstring = "tv=" . $_SESSION['tv'] . "&";
@@ -54,11 +65,11 @@ $clientsurl = "http://" . $plexServer . ":" . $plexport . "/clients?X-Plex-Token
 $getclientsxml = file_get_contents($clientsurl);
 $clientsxml = simplexml_load_string($getclientsxml);
 foreach($clientsxml->Server as $key => $clientdata) {
-		$clientname = $clientdata[name];
+		$clientname = $clientdata['name'];
 		if($clientname == $plexClientName) {
-			$plexClientIP = $clientdata[address];
+			$plexClientIP = $clientdata['address'];
 			$plexClient = trim($plexClientIP);
-			$plexClientUID = $clientdata[machineIdentifier];
+			$plexClientUID = $clientdata['machineIdentifier'];
 		}
 }
 ?>

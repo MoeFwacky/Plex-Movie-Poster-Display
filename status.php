@@ -53,12 +53,18 @@ if (isset($_GET['tv'])) {
 } else {
 	$_SESSION['tv'] = $plexClientName;
 }
+$down = "";
+if (isset($_GET['down'])) {
+	$times = $_GET['down'];
+	for ($i = 0; $i < $times; $i++){ $down .= '</br>'; }
+
+}
 session_write_close();
 ?>
 
     </head>
 
-    <body class='vcr-body'>
+    <body class='vcr-body'><?php echo $down; ?>
         <div id="container" style="max-width:480">
             <div id="alert" align="left" scrolling="no"></div>
             <div id="top" align="left" scrolling="no"></div>

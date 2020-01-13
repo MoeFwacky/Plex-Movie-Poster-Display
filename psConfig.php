@@ -3,5 +3,8 @@
 		
 //Display Type
 		$DisplayType = 'half';
+		
+//Schedule Type
+		$ScheduleType = 'landscape';
 		?>
 		

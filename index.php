@@ -135,7 +135,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 					<nav class="gn-menu-wrapper">
 						<div class="gn-scroller">
 							<ul class="gn-menu">
-								<li><a href="index.php" class="gn-icon gn-icon-help">Home</a></li>
+								<li><a href="index.php" class="gn-icon gn-icon-earth">Home</a></li>
 								<li><a href="adminConfig.php?<?php echo $urlstring; ?>" class="gn-icon gn-icon-cog">Settings</a></li>
 								<?php echo $boxes; ?>
 							</ul>
