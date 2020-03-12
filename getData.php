@@ -44,7 +44,6 @@ $chnum = trim($chnum);
 //GET ALL PSEUDO CHANNEL DAILY SCHEDULE XML FILE LOCATIONS
 $lsgrep = exec("find ". $pseudochannelMaster . "pseudo-channel_*/schedules | grep xml | tr '\n' ','"); //list the paths of all daily schedule xml files in a comma separated list
 $dircontents = explode(",", $lsgrep); //write file locations into an array
-
 // LINE STYLE VARIABLES
 if ($DisplayType == 'half') {
 	$time_style = "<p class='vcr-time-half'>";
@@ -190,10 +189,12 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 		foreach($xmldata->time as $attributes) { //for each entry in the schedule, do the following
 			$start_time_unix = strtotime($attributes['time-start']); //get the entry start time
 		    	$start_time_human = date("H:i", $start_time_unix); //convert start time to readable format
-			$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
-			$duration_seconds = $duration_seconds-1;
-			$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
+			//$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
+			//$duration_seconds = $duration_seconds-1;
+                        $end_time_unix = strtotime($attributes['time-end']); //get entry end time
+			//$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
 			$end_time_human = date("H:i", $end_time_unix); //end time in readable format
+                        $duration_seconds = $end_time_unix - $start_time_unix;
 			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
 			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
 			$ch_number = str_replace("ch", "", $ch_file);
@@ -301,6 +302,20 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 		        $lastentry = "";
 		        $spanMax = 12;
 		        $column = 1;
+			if ($DebugMode == "on") {
+			    $offsetNow = "+0&nbsp;";
+			    $offset15 = "+15&nbsp;";
+			    $offset30 = "+30&nbsp;";
+			    $offset45 = "+45&nbsp;";
+			    $offset60 = "+60&nbsp;";
+			    $offset75 = "+75&nbsp;";
+			    $offset90 = "+90&nbsp;";
+			    $offset105 = "+105&nbsp;";
+			    $offset120 = "+120&nbsp;";
+			    $offset135 = "+135&nbsp;";
+			    $offset150 = "+150&nbsp;";
+			    $offset165 = "+165&nbsp;";
+			}
 			if ($nowTimeUnix >= $start_time_unix && $nowTimeUnix <= $end_time_unix || $nowTimeUnix > $start_time_unix && $nowTimeUnix <= $end_time_unix && $start_time_unix < $timePlus15Unix) {
 					$theTimeUnix = $nowTimeUnix;
 					$timeBetween = $start_time_unix - $theTimeUnix;
@@ -322,8 +337,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$startbefore = round($startbefore / 900);
 					$colspan = $colspan - $startbefore;
 					}
-					
-			    $timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+0&nbsp;";
+			    $timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offsetNow . "";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -366,7 +380,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 			    $colspan = $colspan - $startbefore;
 			}
 			
-			$timeData .= "<td colspan='$colspan' class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+15&nbsp;";
+			$timeData .= "<td colspan='$colspan' class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset15";
 			if ($attributes['type'] == "TV Shows") {
 			    $timeData .= "<span style='$channelplayingTitleStyle;'>";
 			    $timeData .= $attributes['show-title'];
@@ -411,7 +425,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan='$colspan' class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+30&nbsp;";
+					$timeData .= "<td colspan='$colspan' class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset30";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -455,7 +469,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+45&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset45";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -499,7 +513,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+60&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset60";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -541,7 +555,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+75&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset75";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -583,7 +597,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+90&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset90";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -625,7 +639,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+105&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset105";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -668,7 +682,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+120&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset120";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -710,7 +724,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+135&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset135";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -752,7 +766,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+150&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset150";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];
@@ -794,7 +808,7 @@ foreach ($dircontents as $xmlfile) { //do the following for each xml schedule fi
 					$colspan = $colspan - $startbefore;
 					}
 					
-					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>+165&nbsp;";
+					$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>$offset165";
 					if ($attributes['type'] == "TV Shows") {
 					$timeData .= "<span style='$channelplayingTitleStyle;'>";
 					$timeData .= $attributes['show-title'];

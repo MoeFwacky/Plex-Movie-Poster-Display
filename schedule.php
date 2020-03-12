@@ -49,12 +49,17 @@ foreach ($tvlocations as $tvbox) {
 			}
 		}
 		</script>
-		<script
+		<script 
 	    src="https://code.jquery.com/jquery-2.2.4.min.js"
 	    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
 	    crossorigin="anonymous">
 	    </script>
-		<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	    <script>
+		$(document).ready( function() {
+			$("#topbar").load("topbar.php");
+		});
+	    </script>
 		<script>
 		        $(document).ready(
 		            function() {
@@ -140,27 +145,8 @@ foreach ($tvlocations as $tvbox) {
 			<div class="container" style="" scrolling="no"><span style="color:yellow"><?php echo $plexClientName; ?> <span style="color:white" id="nowplaying" class="container">Please Stand By</span></div>
 			<div id="schedule" class="container" name="schedule"><?php echo $scheduleTable; ?></div>
 			</br><a href="schedule.php?action=updateweb&<?php echo $urlstring; ?>" style="color:white" href="">Update Channel Schedule Data &#8594;</a>
-			<ul id="gn-menu" class="gn-menu-main">
-				<li class="gn-trigger">
-					<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
-					<nav class="gn-menu-wrapper">
-						<div class="gn-scroller">
-							<ul class="gn-menu">
-								<li><a href="index.php" class="gn-icon gn-icon-earth">Home</a></li>
-								<li><a href="adminConfig.php?<?php echo $urlstring;?>" class="gn-icon gn-icon-cog">Settings</a></li>
-								<?php echo $boxes; ?>
-							</ul>
-						</div><!-- /gn-scroller -->
-					</nav>
-				</li>
-				<li><a class="codrops-icon" href="schedule.php?action=up&<?php echo $urlstring; ?>">Up</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=down&<?php echo $urlstring; ?>">Down</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=stop&<?php echo $urlstring; ?>">Stop</a></li>
-				<li></li>
-			</ul>
-			
 		</div><!-- /container -->
-		
+		<div id="topbar" name="topbar"></div>
 		<script>
 			new gnMenu( document.getElementById( 'gn-menu' ) );
 		</script>
