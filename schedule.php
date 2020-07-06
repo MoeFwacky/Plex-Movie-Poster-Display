@@ -147,8 +147,5 @@ foreach ($tvlocations as $tvbox) {
 			</br><a href="schedule.php?action=updateweb&<?php echo $urlstring; ?>" style="color:white" href="">Update Channel Schedule Data &#8594;</a>
 		</div><!-- /container -->
 		<div id="topbar" name="topbar"></div>
-		<script>
-			new gnMenu( document.getElementById( 'gn-menu' ) );
-		</script>
 	</body>
 </html>

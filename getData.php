@@ -445,6 +445,7 @@ foreach ($DBarray as $databasefile) { //do the following for each database file
 				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
 				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
 				$lastentry = $sqlData;
+
 			}
 			$spanMax = $spanMax - 1;
             $column = $column + 1;

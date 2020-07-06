@@ -139,7 +139,6 @@ if ($DebugMode == "off" || $_POST['DebugMode'] == "off") {
 								<a style="padding-left:50px;color:white"><input type="radio" name="DebugMode" value="off" style="padding-left:20px" <?php echo "$debugoff"; ?> >Off</input></a>
 								<a style="padding-left:20px;color:white"><input type="radio" name="DebugMode" value="on" style="padding-left:20px" <?php echo "$debugon"; ?> >On</input></a>
 							</div>
-
 							<div style="padding-left:50px">
 								<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
 							</div>

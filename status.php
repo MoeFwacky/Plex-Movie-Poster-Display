@@ -59,10 +59,10 @@ $down = "";
 if (isset($_GET['down'])) {
 	$times = $_GET['down'];
 	for ($i = 0; $i < $times; $i++){ $down .= '</br>'; }
-
 }
 ?>
     </head>
+
 
     <body class='vcr-body'><?php echo "$down"?>
         <div id="container" style="max-width:480">
