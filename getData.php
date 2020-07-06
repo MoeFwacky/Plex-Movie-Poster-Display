@@ -1,9 +1,24 @@
 <?php
+$width = "<script type='text/javascript'>document.write(window.innerWidth);</script>";
+$height = "<script type='text/javascript'>document.write(window.innerHeight);</script>";
 include 'config.php'; //Get variables from config
 include 'control.php';
 $results = Array();
 if (isset($_GET['tv'])) {
-        $plexClientName = $_GET['tv'];
+	$tv = $_GET['tv'];
+	if ($tv != "null" && $tv != NULL) {
+	        $plexClientName = $_GET['tv'];
+		$urlstring = "tv=" . $_GET['tv'] . "&";
+		if ($_GET['tv'] != $configClientName) {
+			$pseudochannel = $pseudochannelTrim . "_" . $_GET['tv'] . "/";
+			$pseudochannel = trim($pseudochannel);
+		}
+	} else {
+		$tv = plexClientName;
+                $urlstring = "";
+	}
+} else {
+	$urlstring = "";
 }
 
 //GET PLEX DATA
@@ -24,6 +39,8 @@ $ps_boxes=array();
 //SET TIME AND DATE
 $rightnow = time(); //time
 $date = date('H:i'); //also time
+//$date = date('H:i',strtotime("23:30"));
+$dateunix = strtotime($date);
 $day = date('D F d'); //date
 $text_color='cyan';
 $text_color_alt='cyan';
@@ -43,6 +60,11 @@ $chnum = trim($chnum);
 $lsgrep = exec("find ". $pseudochannelMaster . "pseudo-channel_*/schedules | grep xml | tr '\n' ','"); //list the paths of all daily schedule xml files in a comma separated list
 $dircontents = explode(",", $lsgrep); //write file locations into an array
 
+//GET ALL PSEUDO CHANNEL DATABASE FILE LOCATIONS
+$DBarray = array();
+$findDB = exec("find ". $pseudochannelMaster . "pseudo-channel_* | grep db | tr '\n' ','");
+$DBarray = explode(",", $findDB);
+
 // LINE STYLE VARIABLES
 if ($DisplayType == 'half') {
 	$time_style = "<p class='vcr-time-half'>";
@@ -50,8 +72,8 @@ if ($DisplayType == 'half') {
 	$middle_line = "<p class='vcr-info-half-2'>";
 	$bottom_line = "<p class='vcr-info-half-3'>";
 	$side_channel = "<p class='vcr-side-half'>Channel $channel_num</p>";
-
-	$position_half = "<img width='100%' style='opacity:1;position: absolute; align: top; '>";
+	$position_half = "<img position: absolute; align: top; width='480' style='opacity:1;'>";
+//	$position_half = "<img width='100%' style='opacity:1;position: absolute; align: top; '>";
 }
 
 if ($DisplayType == 'full') {
@@ -117,8 +139,6 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
           if($clients->Player['title'] == $plexClientName) { //If the active client on plex matches the client in the config
 			    //IF PLAYING COMMERCIAL
 				if($clients['type'] == "movie" && $clients['duration'] < 1800000) {
-	          			#$text_color='cyan';
-					#$text_color_alt='cyan';
 					if ($DisplayType == 'full') {
 					$position=$position_idle_full;
 					}
@@ -178,129 +198,520 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 $doheader = "0";
 $ch_file = "";
 $nowtable = "";
-foreach ($dircontents as $xmlfile) { //do the following for each xml schedule file
-	if($xmlfile){
-		$xmldata = simplexml_load_file($xmlfile); //load the xml schedule file
-	}
-	if($xmldata){
-		foreach($xmldata->time as $attributes) { //for each entry in the schedule, do the following
-			$start_time_unix = strtotime($attributes['time-start']); //get the entry start time
-		    	$start_time_human = date("H:i", $start_time_unix); //convert start time to readable format
-			$duration_seconds = $attributes['duration']/1000; //get entry duration and convert to seconds
-			$duration_seconds = $duration_seconds-1;
-			$end_time_unix = $start_time_unix + $duration_seconds; //using start time and duration, calculate the end time
-			$end_time_human = date("H:i", $end_time_unix); //end time in readable format
-			$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $xmlfile); //get channel number
-			$ch_file = str_replace("/schedules/pseudo_schedule.xml", "", $ch_file);
-			$ch_number = str_replace("ch", "", $ch_file);
-			$favicon_local_path = glob('./logos/channel-logo_'.$ch_number.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
-			$favicon_pseudo_path = glob($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon*'.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
-			$favicon_img_tag = "";
-			//error_log("favicon_local_path", 0);
-			//error_log(print_r($favicon_local_path, TRUE)); 
-			if (!file_exists('./logos')) {
-			    mkdir('./logos', 0777, true);
-			}
+$timeData = "";
+$results['test'] = "";
 
-			if(count($favicon_local_path) > 0){
-				if(!file_exists($favicon_local_path[0])){
-					if(file_exists($favicon_pseudo_path[0])){
-						copy($favicon_pseudo_path[0], $favicon_local_path[0]);
-					}
-				}
-			} else {
+foreach ($DBarray as $databasefile) { //do the following for each database file
+	if($databasefile) {
+		$psDB = new SQLite3($databasefile);
+		$ch_file = str_replace($pseudochannelMaster . "pseudo-channel_", "ch", $databasefile); //get channel number
+		$ch_file = str_replace("/pseudo-channel.db", "", $ch_file);
+		$ch_number = str_replace("ch", "", $ch_file);
+		$ch_row = "row" . $ch_number;
+		$favicon_local_path = glob('./logos/channel-logo_'.$ch_number.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
+		$favicon_pseudo_path = glob($pseudochannelMaster . "pseudo-channel_".$ch_number.'/favicon*'.".{jpg,png,gif,ico,svg,jpeg}", GLOB_BRACE);
+		$favicon_img_tag = "";
 
-				if (count($favicon_pseudo_path) > 0){ 
-					if(file_exists($favicon_pseudo_path[0])){
-						copy($favicon_pseudo_path[0], './logos/channel-logo_'.$ch_number.'.'.pathinfo($favicon_pseudo_path[0])['extension']);
-					}
-				}
+		if (!file_exists('./logos')) {
+			mkdir('./logos', 0777, true);
+		}
 
-			}
-			
-			if (count($favicon_local_path) > 0){
-				if(file_exists($favicon_local_path[0])){
-					$favicon_img_tag = "<img class='schedule-channel-favicon' src='$favicon_local_path[0]'>";
-				}else{
-					$favicon_img_tag = "";
+		if(count($favicon_local_path) > 0){
+			if(!file_exists($favicon_local_path[0])){
+				if(file_exists($favicon_pseudo_path[0])){
+					copy($favicon_pseudo_path[0], $favicon_local_path[0]);
 				}
 			}
-			
-
-			if ($doheader != "1") {
-				$tableheader = "<table class='schedule-table'><tr><th>&nbsp;Channel&nbsp;</th><th>Time</th><th>Title</th></tr>";
-				$chantableheader = "<table class='schedule-table'><tr><th colspan='2'>";
-				$nowtable = $tableheader;
-				$doheader = "1";
-			}
-			if ($chnum == $ch_number) {
-				$channelplaying = "color:#f4ff96";
-				$channelPlayingRowClass = "now-playing-highlight-me";
-				$channelplayingTitleStyle = "color:#f4ff96";
-			} else {
-				$channelplaying = "";
-				$channelPlayingRowClass = "";
-				$channelplayingTitleStyle = "";
-			}
-			$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
-			if ($rightnow >= $start_time_unix && $rightnow <= $end_time_unix) {
-				$nowtable .= "<tr><td class='$channelPlayingRowClass'><span class='favicon-container'><a style='$channelplaying' href='schedule.php?" . $urlstring . "ch=$ch_number'>$favicon_img_tag<span class='ch_number'>" . $ch_number_for_html . "</span></a></span></td>";
-				$nowtable .= "<td class='$channelPlayingRowClass' style='$channelplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-				$nowtable .= "<td class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>&nbsp";
-				if ($attributes['type'] == "TV Shows") {
-					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
-					$nowtable .= $attributes['show-title'];
-					$nowtable .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-				} elseif ($attributes['type'] == "Commercials") {
-					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
-					$nowtable .= $attributes['type'] . "</td>";
-				} else {
-					$nowtable .= "<span style='$channelplayingTitleStyle;'>";
-					$nowtable .= $attributes['title'] . "</a></td>";
-				}
-				$nowtable .= "</span>";
-			}
-
-			try {
-				if (!isset($results[$ch_file]) || $results[$ch_file] == "") {
-					$results[$ch_file] = $chantableheader . "<a href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>Channel " . $ch_number . "</a></th></tr><th>Time</th><th>Title</th></tr></tr>";
-				}
-		        
-		    } catch (Exception $e) {
-		        error_log(print_r($e, TRUE)); 
-		    }
-
-			if ($rightnow >= $start_time_unix && $rightnow < $end_time_unix) {
-				$isnowplaying = "color:#f4ff96";
-			} else {
-				$isnowplaying = "";
-			}
-			if ($attributes['type'] != "Commercials") {
-				if (isset($results[$ch_file])) {
-					$results[$ch_file] .= "<tr>";
-					$results[$ch_file] .= "<td style='$isnowplaying'>" . $start_time_human . " - " . $end_time_human . " </td>";
-					$results[$ch_file] .= "<td style='$isnowplaying;text-align:left'>&nbsp;";
-					if ($attributes['type'] == "TV Shows") {
-						$results[$ch_file] .= $attributes['show-title'];
-						$results[$ch_file] .= "</br>&nbsp;S" . $attributes['show-season'] . "E" . $attributes['show-episode'] . " - " . $attributes['title'] . "</td>";
-					} elseif ($attributes['type'] == "Commercials") {
-						$results[$ch_file] .= $attributes['type'] . "</td>";
-					} else {
-						$results[$ch_file] .= $attributes['title'] . "</td>";
-					}
+		} else {
+			if (count($favicon_pseudo_path) > 0){ 
+				if(file_exists($favicon_pseudo_path[0])){
+					copy($favicon_pseudo_path[0], './logos/channel-logo_'.$ch_number.'.'.pathinfo($favicon_pseudo_path[0])['extension']);
 				}
 			}
 		}
+		if (count($favicon_local_path) > 0){
+			if(file_exists($favicon_local_path[0])){
+				$favicon_img_tag = "<img class='schedule-channel-favicon' src='$favicon_local_path[0]'>";
+			}else{
+				$favicon_img_tag = "";
+			}
+		}
+
+		if ($doheader != "1") {
+			$currentTime = $dateunix;
+			$nowTimeUnix = floor($dateunix / 900) * 900;
+			$results['nowtime'] = date("H:i", $nowTimeUnix);
+			$timePlus15Unix = floor(($currentTime + 900) / 900) * 900;
+			$results['timePlus15'] = date("H:i", $timePlus15Unix);
+			$timePlus30Unix = floor(($currentTime + 1800) / 900) * 900;
+			$results['timePlus30'] = date("H:i", $timePlus30Unix);
+			$timePlus45Unix = floor(($currentTime + 2700) / 900) * 900;
+			$results['timePlus45'] = date("H:i", $timePlus45Unix);
+			$timePlus60Unix = floor(($currentTime + 3600) / 900) * 900;
+			$results['timePlus60'] = date("H:i", $timePlus60Unix);
+			$timePlus75Unix = floor(($currentTime + 4500) / 900) * 900;
+			$results['timePlus75'] = date("H:i", $timePlus75Unix);
+			$timePlus90Unix = floor(($currentTime + 5400) / 900) * 900;
+			$results['timePlus90'] = date("H:i", $timePlus90Unix);
+			$timePlus105Unix = floor(($currentTime + 6300) / 900) * 900;
+			$results['timePlus105'] = date("H:i", $timePlus105Unix);
+			$timePlus120Unix = floor(($currentTime + 7200) / 900) * 900;
+			$results['timePlus120'] = date("H:i", $timePlus120Unix);
+			$timePlus135Unix = floor(($currentTime + 8100) / 900) * 900;
+			$results['timePlus135'] = date("H:i", $timePlus135Unix);
+			$timePlus150Unix = floor(($currentTime + 9000) / 900) * 900;
+			$results['timePlus150'] = date("H:i", $timePlus150Unix);
+			$timePlus165Unix = floor(($currentTime + 9900) / 900) * 900;
+			$results['timePlus165'] = date("H:i", $timePlus165Unix);
+			$timePlus180Unix = floor(($currentTime + 10800) / 900) * 900;
+			$results['timePlus180'] = date("H:i", $timePlus180Unix);
+			$tableheader = "<table><tr class='schedule-table' width='100%'><th width=4%>&nbsp;Ch.&nbsp;</th><th colspan='2' width=16%>Now</th><th colspan='2' width=16%>timePlus30</th><th colspan='2' with=16%>timePlus60</th><th colspan='2' width=16%>timePlus90</th><th colspan='2' width=16%>timePlus120</th><th colspan='2' width=16%>timePlus150</th></tr><tr>";
+			$chantableheader = "<table><tr class='schedule-table'><th colspan='2'>";
+			$nowtimecell = "";
+			$plus15Data = "";
+			$plus30Data = "";
+			$plus45Data = "";
+			$plus60Data = "";
+			$plus75Data = "";
+			$plus90Data = "";
+			$plus105Data = "";
+			$plus120Data = "";
+			$plus135Data = "";
+			$plus150Data = "";
+			$plus165Data = "";
+			$plus180Data = "";
+			$disappear = "";
+			$timeData = "";
+			$channelData = "";
+			$nowtable = $tableheader;
+			$doheader = "1";
+		}
+		if ($chnum == $ch_number) {
+			$channelplaying = "color:#f4ff96";
+			$channelPlayingRowClass = "now-playing-highlight-me";
+			$channelplayingTitleStyle = "color:#f4ff96";
+		} else {
+			$channelplaying = "";
+			$channelPlayingRowClass = "";
+			$channelplayingTitleStyle = "";
+		}
+		$ch_number_for_html = ($favicon_img_tag == "") ? $ch_number : "";
+			$channelData = "<td class='$channelPlayingRowClass'><span class='favicon-container'><a style='$channelplaying' href='schedule.php?" . $urlstring . "action=channel&num=$ch_number'>" . $favicon_img_tag . "<span class='ch_number'>" . $ch_number_for_html . "</a></span></td>";
+		$rowContents = $channelData;
+			$lastentry = "";
+			$spanMax = 12;
+			$column = 1;
+		if ($DebugMode == "on") {
+			$offsetNow = "+0&nbsp;";
+			$offset15 = "+15&nbsp;";
+			$offset30 = "+30&nbsp;";
+			$offset45 = "+45&nbsp;";
+			$offset60 = "+60&nbsp;";
+			$offset75 = "+75&nbsp;";
+			$offset90 = "+90&nbsp;";
+			$offset105 = "+105&nbsp;";
+			$offset120 = "+120&nbsp;";
+			$offset135 = "+135&nbsp;";
+			$offset150 = "+150&nbsp;";
+			$offset165 = "+165&nbsp;";
+		} else {
+						$offsetNow = "";
+						$offset15 = "";
+						$offset30 = "";
+						$offset45 = "";
+						$offset60 = "";
+						$offset75 = "";
+						$offset90 = "";
+						$offset105 = "";
+						$offset120 = "";
+						$offset135 = "";
+						$offset150 = "";
+						$offset165 = "";
+		}
+		$lastentry = array();
+		$sqlData = array();
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sqlNow = $result->fetchArray();
+		if($sqlNow) {	
+			$sqlData = $sqlNow;
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+            $start_time_human = strtotime($sqlData['startTime']);
+            $end_time_human = strtotime($end_time_modified);
+            $spanDuration = $end_time_human - $start_time_human - (time() - $start_time_human);
+            $colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offsetNow;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em'>";
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+		} else {
+			$timeData .= "<td colspan=1></td>";
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+15 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+15 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1"); 
+		$sql15 = $result->fetchArray();
+		if($sql15) {
+			$sqlData = $sql15;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset15;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+30 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+30 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql30 = $result->fetchArray();
+		if($sql30) {	
+			$sqlData = $sql30;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset30;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";		
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+45 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+45 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql45 = $result->fetchArray();
+		if($sql45) {
+			$sqlData = $sql45;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset45;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";		
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+60 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+60 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql60 = $result->fetchArray();
+		if($sql60) {
+			$sqlData = $sql60;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset60;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";		
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+75 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+75 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql75 = $result->fetchArray();
+		if($sql75) {
+			$sqlData = $sql75;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset75 . "";
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";	
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+90 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+90 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql90 = $result->fetchArray();
+		if($sql90) {
+			$sqlData = $sql90;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset90;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";		
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+105 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+105 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql105 = $result->fetchArray();
+		if($sql105) {
+			$sqlData = $sql105;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset105;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";		
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+120 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+120 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql120 = $result->fetchArray();
+		if($sql120) {
+			$sqlData = $sql120;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset120;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";		
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+135 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+135 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql135 = $result->fetchArray();
+		if($sql135) {
+			$sqlData = $sql135;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset135;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";	
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+150 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+150 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql150 = $result->fetchArray();
+		if($sql150) {
+			$sqlData = $sql150;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset150;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";	
+		}
+		$result = $psDB->query("SELECT * FROM daily_schedule WHERE (time(endTime) > time('" . $nowTimeUnix . "','unixepoch','+165 minutes','localtime') AND time(startTime) <= time('" . $nowTimeUnix . "','unixepoch','+165 minutes','localtime') AND sectionType != 'Commercials') ORDER BY time(startTime) ASC LIMIT 1");
+		$sql165 = $result->fetchArray();
+		if($sql165) {
+			$sqlData = $sql165;
+			if($sqlData != $lastentry) {
+			$colspan = 1;
+			$end_time_modified = str_replace("1900-01-01 ", "", $sqlData['endTime']);
+			$end_time_modified = explode('.',$end_time_modified);
+			$end_time_modified = $end_time_modified[0];
+			$start_time_human = strtotime($sqlData['startTime']);
+			$end_time_human = strtotime($end_time_modified);
+			$spanDuration = $end_time_human - $start_time_human;
+			$colspan = ceil($spanDuration / 900);
+			$timeData .= "<td colspan=$colspan class='$channelPlayingRowClass' style='$channelplaying;text-align:left'><a style='display:block;width:100%' href='?" . $urlstring . "action=channel&num=$ch_number'>" . $offset165;
+			if ($sqlData['sectionType'] == "TV Shows") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>"; 
+				$timeData .= $sqlData['showTitle'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>" . $sqlData['title'] . "&nbsp;(S" . $sqlData['seasonNumber'] . "E" . $sqlData['episodeNumber'] . ")";
+				$timeData .= "</br>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			} elseif ($sqlData['sectionType'] == "Movies") {
+				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
+				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
+				$lastentry = $sqlData;
+			}
+			$spanMax = $spanMax - 1;
+            $column = $column + 1;
+			}
+		} else {
+			$timeData .= "<td colspan=1></td>";	
+		}
 	}
+	$rowContents = $channelData . $timeData;
+	$results["$ch_row"] = "$rowContents";
+	$timeData = "";
 }
-$nowtable .= "</table>";
+
+$nowtable .= "</table>"; 
 if (isset($results[$ch_file])) {
 	$results[$ch_file] .= "</table>";
 }
-$results['rightnow'] = $nowtable;
-$results['top'] = "$top_section";
-$results['middle'] = "$middle_section $bottom_section";
-$results['bottom'] = "<p></p>";
-$results['nowplaying'] = "$nowplaying";
+//$results['nowplaying'] = "$nowplaying";
+$results['row'] = "";
 echo json_encode($results);
 ?>

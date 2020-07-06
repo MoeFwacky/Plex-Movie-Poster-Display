@@ -11,12 +11,15 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/PieBox.css">
     <link rel="stylesheet" href="css/tv.css">
-
     <script>
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	const tv = urlParams.get('tv');
+	const getdata = "getClock.php?tv="+tv;
         $(document).ready(
             function() {
                 setInterval(function() {
-                    $.getJSON('getData.php',function(data) {
+                    $.getJSON(getdata,function(data) {
                         $.each(data, function(key, val) {
                             $('#'+key).html(val);
                         });
@@ -26,13 +29,13 @@
     </script>
 <?php
 include('./config.php');
-session_start();
 if (isset($_GET['size'])) {
-	$_SESSION['size'] = $_GET['size'];
+	$size = $_GET['size'];
 	$DisplayType=$_GET['size'];
 	} else {
-	$_SESSION['size'] = $DisplayType;
+	$size = $DisplayType;
 }
+
 if ($DisplayType == "half") {
 	$vcr_time = "vcr-time-half";
 	$vcr_info_1 = "vcr-info-half-1";
@@ -47,24 +50,21 @@ if ($DisplayType == "half") {
 	$vcr_side = "vcr-side-full";
 }
 if (isset($_GET['tv'])) {
-	$_SESSION['tv'] = $_GET['tv'];
+	$tv = $_GET['tv'];
 	$urlstring = "tv=" . $_GET['tv'] . "&";
-	$_SESSION['urlstring'] = $urlstring;
 } else {
-	$_SESSION['tv'] = $plexClientName;
+	$tv = $plexClientName;
 }
 $down = "";
 if (isset($_GET['down'])) {
 	$times = $_GET['down'];
 	for ($i = 0; $i < $times; $i++){ $down .= '</br>'; }
-
 }
-session_write_close();
 ?>
-
     </head>
 
-    <body class='vcr-body'><?php echo $down; ?>
+
+    <body class='vcr-body'><?php echo "$down"?>
         <div id="container" style="max-width:480">
             <div id="alert" align="left" scrolling="no"></div>
             <div id="top" align="left" scrolling="no"></div>

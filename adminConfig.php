@@ -74,12 +74,22 @@ foreach ($clientsxml->Server as $key => $xmlarray) {
 			return xmlHttp.responseText;
 		}
 		</script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script>
+                $(document).ready( function() {
+                        $("#topbar").load("topbar.php");
+                });
+            </script>
 	<?php if (!empty($_POST)) {
-		$myfile = fopen("psConfig.php", "w") or die("Unable to open file!");
+		$myfile = fopen("psConfig.php", "w") or die("<p color=white>Unable to open file!</p>");
 		$txt = "<?php //Pseudo Channel
 		\$pseudochannel = '$_POST[pseudochannel]';
 		\n//Display Type
 		\$DisplayType = '$_POST[DisplayType]';
+		\n//Schedule Type
+		\$ScheduleType = '$_POST[ScheduleType]';
+		\n//Debug Mode
+		\$DebugMode = '$_POST[DebugMode]';
 		?>
 		";
 		echo  $txt;
@@ -99,6 +109,17 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 	$halfstatus = "";
 	$fullstatus = "";
 }
+$ScheduleType == "landscape";
+if ($DebugMode == "off" || $_POST['DebugMode'] == "off") {
+	$debugoff = "checked";
+	$debugon = "";
+} elseif ($DebugMode == "on" || $_POST['DebugMode'] == "on") {
+	$debugoff = "";
+	$debugon = "checked";
+} else {
+	$debugoff = "checked";
+	$debugon = "checked";
+}
 ?>
 	</head>
 	<body>
@@ -113,9 +134,11 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 								<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannelMaster"; ?>"></br></br>
 								<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
 								<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
-								<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a>
+								<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a></br></br>
+								<label style="padding-left:10px;color:white">Debug Mode:</label></br>
+								<a style="padding-left:50px;color:white"><input type="radio" name="DebugMode" value="off" style="padding-left:20px" <?php echo "$debugoff"; ?> >Off</input></a>
+								<a style="padding-left:20px;color:white"><input type="radio" name="DebugMode" value="on" style="padding-left:20px" <?php echo "$debugon"; ?> >On</input></a>
 							</div>
-							
 							<div style="padding-left:50px">
 								<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
 							</div>
@@ -137,25 +160,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">&#8594; Purge Logo Image Cache</a>
 				</div>
 			</div>
-			<ul id="gn-menu" class="gn-menu-main">
-				<li class="gn-trigger">
-					<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
-					<nav class="gn-menu-wrapper">
-						<div class="gn-scroller">
-							<ul class="gn-menu">
-								<li><a href="index.php" class="gn-icon gn-icon-help">Home</a></li>
-								<li><a href="adminConfig.php?<?php echo $urlstring; ?>" class="gn-icon gn-icon-cog">Settings</a></li>
-								<?php echo $boxes; ?>
-							</ul>
-						</div><!-- /gn-scroller -->
-					</nav>
-				</li>
-				<li><a class="codrops-icon" href="schedule.php?action=up?<?php echo $urlstring; ?>">Up</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=down?<?php echo $urlstring; ?>">Down</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=stop?<?php echo $urlstring; ?>">Stop</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=updateweb&<?php echo $urlstring; ?>">Update Web</a></li>
-				<li></li>
-			</ul>
+			<div id="topbar" name="topbar"></div>
 		</div><!-- /container -->
 		<script src="js/classie.js"></script>
 		<script src="js/gnmenu.js"></script>

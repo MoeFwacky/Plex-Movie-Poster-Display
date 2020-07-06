@@ -73,6 +73,12 @@ foreach ($clientsxml->Server as $key => $xmlarray) {
 			return xmlHttp.responseText;
 		}
 		</script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script>
+                $(document).ready( function() {
+                        $("#topbar").load("topbar.php");
+                });
+            </script>
 	<?php if (!empty($_POST)) {
 		$myfile = fopen("psConfig.php", "w") or die("Unable to open file!");
 		$txt = "<?php //Pseudo Channel
@@ -129,21 +135,7 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 			<div class="dripdrop" style="color:white;padding-left:10px"></br>
 			<a class="dripdrop-header">Plex Server: </a><a><?php echo $plexServer; ?>:<?php echo $plexport; ?></a></br>
 			<a class="dripdrop-header">Pseudo Channel: </a><a><?php echo $pseudochannelMaster; ?></a></div>
-			<ul id="gn-menu" class="gn-menu-main">
-				<li class="gn-trigger">
-					<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
-					<nav class="gn-menu-wrapper">
-						<div class="gn-scroller">
-							<ul class="gn-menu">
-								<li><a href="index.php" class="gn-icon gn-icon-help">Home</a></li>
-								<li><a href="adminConfig.php?<?php echo $urlstring; ?>" class="gn-icon gn-icon-cog">Settings</a></li>
-								<?php echo $boxes; ?>
-							</ul>
-						</div><!-- /gn-scroller -->
-					</nav>
-				</li>
-				<li></li>
-			</ul>
+			<div id="topbar" name="topbar"></div>
 		</div><!-- /container -->
 		<script src="js/classie.js"></script>
 		<script src="js/gnmenu.js"></script>
