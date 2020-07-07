@@ -9,7 +9,7 @@ if (isset($_GET['tv'])) {
 	if ($tv != "null" && $tv != NULL) {
 	        $plexClientName = $_GET['tv'];
 		$urlstring = "tv=" . $_GET['tv'] . "&";
-		if ($_GET['tv'] != $configClientName) {
+		if ($_GET['tv'] != $configClientName && $_GET['tv'] != "null" && $_GET['tv'] != NULL) {
 			$pseudochannel = $pseudochannelTrim . "_" . $_GET['tv'] . "/";
 			$pseudochannel = trim($pseudochannel);
 		}
@@ -62,7 +62,7 @@ $dircontents = explode(",", $lsgrep); //write file locations into an array
 
 //GET ALL PSEUDO CHANNEL DATABASE FILE LOCATIONS
 $DBarray = array();
-$findDB = exec("find ". $pseudochannelMaster . "pseudo-channel_* | grep db | tr '\n' ','");
+$findDB = exec("find ". $pseudochannelMaster . "pseudo-channel_* -name 'pseudo-channel.db' | tr '\n' ','");
 $DBarray = explode(",", $findDB);
 
 // LINE STYLE VARIABLES
@@ -445,7 +445,6 @@ foreach ($DBarray as $databasefile) { //do the following for each database file
 				$timeData .= "<span class='schedule-title' style='$channelplayingTitleStyle;font-size:1.2em';>" . $sqlData['title'] . "</span>";
 				$timeData .= "</br><span class='schedule-subtitle' style='font-size:1em';>(" . date('H:i',$start_time_human) . " - " . date('H:i',$end_time_human) . ")</span></td>";
 				$lastentry = $sqlData;
-
 			}
 			$spanMax = $spanMax - 1;
             $column = $column + 1;
