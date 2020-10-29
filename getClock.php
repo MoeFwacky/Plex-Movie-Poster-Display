@@ -19,7 +19,12 @@ if (isset($_GET['tv'])) {
 $url = "http://" . $plexServer . ":" . $plexport . "/status/sessions?X-Plex-Token=" . $plexToken; #set plex server url
 $getxml = file_get_contents($url);
 $xml = simplexml_load_string($getxml) or die("feed not loading");
-
+$check_headers = get_headers($url, 1);
+if (strpos($check_headers[0], "404") !== false) {
+	$url_status = "404";
+} else {
+	$url_status = "ok";
+}
 $time_style=NULL;
 $top_line=NULL;
 $middle_line=NULL;
@@ -52,7 +57,11 @@ $chnum = trim($chnum);
 
 // LINE STYLE VARIABLES
 if ($DisplayType == 'half') {
-	$time_style = "<p class='vcr-time-half'>";
+	if($url_status=="404") {
+		$time_style = "<p class='vcr-half-blink'>";
+	} else {
+		$time_style = "<p class='vcr-time-half'>";
+	}
 	$top_line = "<p class='vcr-info-half-1'>";
 	$middle_line = "<p class='vcr-info-half-2'>";
 	$bottom_line = "<p class='vcr-info-half-3'>";
@@ -106,13 +115,16 @@ if ($DisplayType == 'full') {
 if ($DisplayType == 'half') {
 	$position=$position_half;
 }
-if ($pgrep >= 1) { //PSEUDO CHANNEL ON
+if($url_status=="404") {
+	$top_section = $time_style . "12:00</p>" . $position;
+	} else {
 	$top_section = $time_style . $date . "</p>" . $position;
+}
+if ($pgrep >= 1) { //PSEUDO CHANNEL ON
 	$middle_section = $top_line . "Channel $channel_num</p>";
 	$bottom_section = $middle_line . "</p>";
 	$nowplaying = "Channel $channel_num Standing By...";
 } else { //PSEUDO CHANNEL OFF
-	$top_section = $time_style . $date . "</p>" . $position;
 	$middle_section = $top_line . $day . "</p>";
 	$bottom_section = "<p></p>";
 	$nowplaying = "Please Stand By...";
@@ -123,9 +135,11 @@ if ($pgrep >= 1) { //PSEUDO CHANNEL ON
           if($clients->Player['title'] == $plexClientName) { //If the active client on plex matches the client in the config
 			    //IF PLAYING COMMERCIAL
 				if($clients['type'] == "movie" && $clients['duration'] < 1800000) {
-					$commercialURL = "http://" . $plexServer . ":" . $plexport . $clients['key'] . "?X-Plex-Token=" . $plexToken;
-					$getCommercialXML = file_get_contents($commercialURL);
-					$commercialData = simplexml_load_string($getCommercialXML) or die("feed not loading");
+	          			#$text_color='cyan';
+					#$text_color_alt='cyan';
+                                        $commercialURL = "http://" . $plexServer . ":" . $plexport . $clients['key'] . "?X-Plex-Token=" . $plexToken;
+                                        $getCommercialXML = file_get_contents($commercialURL);
+                                        $commercialData = simplexml_load_string($getCommercialXML) or die("feed not loading");
 					if ($DisplayType == 'full') {
 					$position=$position_idle_full;
 					}
