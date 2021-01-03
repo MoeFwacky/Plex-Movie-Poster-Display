@@ -146,9 +146,9 @@ $boxes = '';
 		$showDropDown = "";
 		foreach ($allShows as $oneShow) {
 			if ($sqlData['title'] == $oneShow) {
-				$showDropDown .= "<option value='" . $oneShow . "' selected>" . $oneShow . "</option>";
+				$showDropDown .= "<option value='" . str_replace("'", "&#039;", $oneShow) . "' selected>" . $oneShow . "</option>";
 			} else {
-				$showDropDown .= "<option value='" . $oneShow . "'>" . $oneShow . "</option>";
+				$showDropDown .= "<option value='" . str_replace("'", "&#039;", $oneShow) . "'>" . $oneShow . "</option>";
 			}
 		}
 
