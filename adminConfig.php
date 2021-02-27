@@ -1,5 +1,26 @@
 <!DOCTYPE html>
-<?php include('./control.php'); ?>
+<?php
+session_start();
+include('./control.php');
+include('./config.php');
+$tvlocations = glob($pseudochannelTrim . "*", GLOB_ONLYDIR);
+foreach ($tvlocations as $tvbox) {
+        if ($tvbox . "/"  == $pseudochannelMaster) {
+                $boxname = $configClientName;
+                $boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
+        } else {
+		$boxname = trim($tvbox, $pseudochannelTrim . "_");
+		$boxes .= "<li><a href='schedule.php?tv=$boxname' class='gn-icon gn-icon-videos'>TV: $boxname</a></li>";
+	}
+}
+$clientcount = 1;
+foreach ($clientsxml->Server as $key => $xmlarray) {
+	$clientinfodump .= "<a class='dripdrop-title'>Plex Client #$clientcount</a></br><a class='dripdrop-header'>Name:</a></br><a href='schedule.php?tv=$xmlarray[name]' style='color:white'> $xmlarray[name] </a></br></br>";
+	$clientinfodump .= "<a class='dripdrop-header'>Local IP Address:</a></br><a> $xmlarray[address] </a></br></br>";
+	$clientinfodump .= "<a class='dripdrop-header'>Unique Identifier</a></br><a> $xmlarray[machineIdentifier] </a></br></br>";
+	$clientcount = $clientcount + 1;
+	}
+?>
 <html lang="en" class="no-js" style="height:100%">
 	<head>
 		<style type="text/css">a {text-decoration: none}</style>
@@ -22,7 +43,11 @@
 		<meta name="msapplication-config" content="assets/browserconfig.xml">
 		<meta name="theme-color" content="#ffffff">
 		<script src="js/modernizr.custom.js"></script>
-		<script type="text/javascript" src="assets/js/jquery-3.0.0.min.js"></script>
+		<script
+	    src="https://code.jquery.com/jquery-2.2.4.min.js"
+	    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+	    crossorigin="anonymous">
+	    </script>
 		<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
 		<script>
 		        $(document).ready(
@@ -49,12 +74,22 @@
 			return xmlHttp.responseText;
 		}
 		</script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script>
+                $(document).ready( function() {
+                        $("#topbar").load("topbar.php");
+                });
+            </script>
 	<?php if (!empty($_POST)) {
-		$myfile = fopen("psConfig.php", "w") or die("Unable to open file!");
+		$myfile = fopen("psConfig.php", "w") or die("<p color=white>Unable to open file!</p>");
 		$txt = "<?php //Pseudo Channel
 		\$pseudochannel = '$_POST[pseudochannel]';
 		\n//Display Type
 		\$DisplayType = '$_POST[DisplayType]';
+		\n//Schedule Type
+		\$ScheduleType = '$_POST[ScheduleType]';
+		\n//Debug Mode
+		\$DebugMode = '$_POST[DebugMode]';
 		?>
 		";
 		echo  $txt;
@@ -74,60 +109,58 @@ if ($DisplayType == "half" || $_POST['DisplayType'] == "half") {
 	$halfstatus = "";
 	$fullstatus = "";
 }
+$ScheduleType == "landscape";
+if ($DebugMode == "off" || $_POST['DebugMode'] == "off") {
+	$debugoff = "checked";
+	$debugon = "";
+} elseif ($DebugMode == "on" || $_POST['DebugMode'] == "on") {
+	$debugoff = "";
+	$debugon = "checked";
+} else {
+	$debugoff = "checked";
+	$debugon = "checked";
+}
 ?>
 	</head>
 	<body>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<div id="container">
-			<div class="container" style="position:absolute;top:60px" scrolling="no"><h3 style="color:white" class="gn-icon gn-icon-cog">Settings</h3>
-			<div class="container" name="schedulearea" type="text/html";>
-			<form method="post">
-			<div class="container" name="schedulearea" type="text/html";>
-			<label style="padding-left:10px;padding-right:5px;color:white">Pseudo Channel Directory: </label></br>&nbsp;&nbsp;&nbsp;
-			<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannel"; ?>"></br></br>
-			<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
-			<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
-			<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a></div>
-			<div style="padding-left:50px">
-			<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
+			<div class="container" style="position:absolute;top:60px" scrolling="no">
+				<h3 style="color:white" class="gn-icon gn-icon-cog">Settings</h3>
+					<div class="container" name="schedulearea" type="text/html";>
+						<form method="post">
+							<div class="container" name="schedulearea" type="text/html";>
+								<label style="padding-left:10px;padding-right:5px;color:white">Pseudo Channel Directory: </label></br>&nbsp;&nbsp;&nbsp;
+								<input type="text" style="padding-right:50px" name="pseudochannel" value="<?php echo "$pseudochannelMaster"; ?>"></br></br>
+								<label style="padding-left:10px;color:white">Status Screen Display Type:</label></br>
+								<a style="padding-left:50px;color:white"><input type="radio" name="DisplayType" value="full" style="padding-left:20px" <?php echo "$fullstatus"; ?> >Full</input></a>
+								<a style="padding-left:20px;color:white"><input type="radio" name="DisplayType" value="half" style="padding-left:20px" <?php echo "$halfstatus"; ?> >Half</input></a></br></br>
+								<label style="padding-left:10px;color:white">Debug Mode:</label></br>
+								<a style="padding-left:50px;color:white"><input type="radio" name="DebugMode" value="off" style="padding-left:20px" <?php echo "$debugoff"; ?> >Off</input></a>
+								<a style="padding-left:20px;color:white"><input type="radio" name="DebugMode" value="on" style="padding-left:20px" <?php echo "$debugon"; ?> >On</input></a>
+							</div>
+							<div style="padding-left:50px">
+								<input class="btn btn-primary"type="submit" value="Save Changes" name='submit' />
+							</div>
+							<?php if($update == "1") {
+								echo "<div class='alert alert-info' style='color:white;padding-left:50px'>Settings File Updated.</div>";
+							} ?>
+						</form>
+					</div>
+				<div class="dripdrop" style="color:white;padding-left:10px"></br>
+				<a class="dripdrop-title">Plex Server Data</a></br></br>
+				<a class="dripdrop-header">IP Address:</a></br>
+				<a><?php echo $plexServer; ?></a></br></br>
+				<a class="dripdrop-header">Web Port:</a></br>
+				<a><?php echo $plexport; ?></a></br></br>
+				<a class="dripdrop-header">Web Token:</a></br>
+				<a><?php echo $plexToken; ?></a></br></br>
+				<?php echo $clientinfodump; ?>
+				<div style="">
+					<a class="btn btn-primary" style="color:white!important;" href="schedule.php?action=purgefaviconcache&<?php echo $urlstring; ?>">&#8594; Purge Logo Image Cache</a>
+				</div>
 			</div>
-			<?php if($update == "1") {
-				echo "<div class='alert alert-info' style='color:white;padding-left:50px'>Settings File Updated.</div>";
-			} ?>
-			</form>
-			</div>
-			<div class="dripdrop" style="color:white;padding-left:10px"></br>
-			<a class="dripdrop-title">Plex Server and Client Data</a></br></br>
-			<a class="dripdrop-header">Plex Server IP Address:</a></br>
-			<a><?php echo $plexServer; ?></a></br></br>
-			<a class="dripdrop-header">Plex Server Web Port:</a></br>
-			<a><?php echo $plexport; ?></a></br></br>
-			<a class="dripdrop-header">Plex Server Web Token:</a></br>
-			<a><?php echo $plexToken; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Name:</a></br>
-			<a><?php echo $plexClientName; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Local IP Address:</a></br>
-			<a><?php echo $plexClientIP; ?></a></br></br>
-			<a class="dripdrop-header">Plex Client Unique Identifier</a></br>
-			<a><?php echo $plexClientUID; ?></a>
-			</div>
-			<ul id="gn-menu" class="gn-menu-main">
-				<li class="gn-trigger">
-					<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
-					<nav class="gn-menu-wrapper">
-						<div class="gn-scroller">
-							<ul class="gn-menu">
-								<li><a href="schedule.php" class="gn-icon gn-icon-videos">Now Playing</a></li>
-								<li><a href="adminConfig.php" class="gn-icon gn-icon-cog">Settings</a></li>
-							</ul>
-						</div><!-- /gn-scroller -->
-					</nav>
-				</li>
-				<li><a class="codrops-icon" href="schedule.php?action=up">Up</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=down">Down</a></li>
-				<li><a class="codrops-icon" href="schedule.php?action=stop">Stop</a></li>
-				<li></li>
-			</ul>
+			<div id="topbar" name="topbar"></div>
 		</div><!-- /container -->
 		<script src="js/classie.js"></script>
 		<script src="js/gnmenu.js"></script>
